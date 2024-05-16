@@ -57,11 +57,8 @@ public class ScheduleService {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
 
-        // 비밀번호 추출
-        String DtoPassword = changePasswordToString(requestDto);
-
         // 비밀번호 확인
-        checkPassword(scheduleKey, DtoPassword);
+        checkPassword(scheduleKey, requestDto.getSchedulePassword());
 
         // 수정 내용 저장
         schedule.update(requestDto);
@@ -103,10 +100,5 @@ public class ScheduleService {
         if (!Objects.equals(password, storedPassword)) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
-    }
-
-    // DTO 에 저장된 비밀번호 추출
-    private String changePasswordToString(ScheduleRequestDto requestDto) {
-        return requestDto.getSchedulePassword();
     }
 }
