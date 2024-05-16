@@ -3,7 +3,8 @@ package com.sparta.spartaspringpersonaltask.service;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.exceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class ScheduleService {
     private Schedule findSchedule(Long scheduleKey) {
         return scheduleRepository
                 .findById(scheduleKey)
-                .orElseThrow(() -> new IllegalArgumentException("선택한 일정이 없습니다."));
+                .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
     }
 
     // 비밀번호 확인
