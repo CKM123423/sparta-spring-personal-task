@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,8 +57,11 @@ public class ScheduleService {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
 
+        // 비밀번호 추출
+        String DtoPassword = changePasswordToString(requestDto);
+
         // 비밀번호 확인
-        checkPassword(scheduleKey, requestDto);
+        checkPassword(scheduleKey, DtoPassword);
 
         // 수정 내용 저장
         schedule.update(requestDto);
@@ -68,7 +70,21 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    // 데이터베이스에 일정 확인
+    // 일정 삭제 기능
+    public Long deleteSchedule(Long scheduleKey, String password) {
+        // 일정 존재 여부 확인
+        Schedule schedule = findSchedule(scheduleKey);
+
+        // 비밀번호 확인
+        checkPassword(scheduleKey, password);
+
+        // 일정 삭제
+        scheduleRepository.delete(schedule);
+
+        return scheduleKey;
+    }
+
+    // DB에 일정 조회
     private Schedule findSchedule(Long scheduleKey) {
         return scheduleRepository
                 .findById(scheduleKey)
@@ -76,9 +92,7 @@ public class ScheduleService {
     }
 
     // 비밀번호 확인
-    private void checkPassword(Long scheduleKey, ScheduleRequestDto requestDto) {
-        // 현재 입력된 비밀번호
-        String dtoPassword = requestDto.getSchedulePassword();
+    private void checkPassword(Long scheduleKey, String password) {
 
         // DB에 저장된 비밀번호
         String storedPassword = scheduleRepository.findById(scheduleKey)
@@ -86,8 +100,13 @@ public class ScheduleService {
                 .orElse(null);
 
         // 비밀번호가 틀릴경우 예외 발생
-        if (!Objects.equals(dtoPassword, storedPassword)) {
+        if (!Objects.equals(password, storedPassword)) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    // DTO 에 저장된 비밀번호 추출
+    private String changePasswordToString(ScheduleRequestDto requestDto) {
+        return requestDto.getSchedulePassword();
     }
 }

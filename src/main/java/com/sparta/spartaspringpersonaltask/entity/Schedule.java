@@ -17,14 +17,19 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleKey;
+
     @Column(name = "schedule_title", nullable = false)
     private String scheduleTitle;
+
     @Column(name = "schedule_content", nullable = false)
     private String scheduleContent;
+
     @Column(name = "schedule_manager", nullable = false, length = 1000)
     private String scheduleManager;
+
     @Column(name = "schedule_password", nullable = false)
     private String schedulePassword;
+
     @Column(name = "schedule_datetime", nullable = false)
     private LocalDateTime scheduleDatetime;
 
