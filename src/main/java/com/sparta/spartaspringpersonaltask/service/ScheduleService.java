@@ -26,4 +26,18 @@ public class ScheduleService {
         // Entity -> DTO
         return new ScheduleResponseDto(schedule);
     }
+
+    public ScheduleResponseDto viewSelectedSchedule(Long scheduleKey) {
+        // 일정 존재 여부 확인
+        Schedule schedule = findSchedule(scheduleKey);
+
+        // 조회
+        return new ScheduleResponseDto(schedule);
+    }
+
+    private Schedule findSchedule(Long scheduleKey) {
+        return scheduleRepository
+                .findById(scheduleKey)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 일정이 없습니다."));
+    }
 }

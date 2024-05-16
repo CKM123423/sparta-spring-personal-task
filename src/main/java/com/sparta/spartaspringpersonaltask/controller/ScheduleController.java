@@ -3,10 +3,7 @@ package com.sparta.spartaspringpersonaltask.controller;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.service.ScheduleService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -18,8 +15,16 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @PutMapping("/schedule/create")
+    // 일정 등록
+    @PostMapping("/schedule/create")
     public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto) {
         return scheduleService.createSchedule(scheduleRequestDto);
     }
+
+    // 단일 일정 조회
+    @GetMapping("/schedule/{scheduleKey}")
+    public ScheduleResponseDto viewSelectedSchedule(@PathVariable Long scheduleKey) {
+        return scheduleService.viewSelectedSchedule(scheduleKey);
+    }
+
 }
