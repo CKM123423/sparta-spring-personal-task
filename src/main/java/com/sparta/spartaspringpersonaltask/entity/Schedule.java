@@ -35,4 +35,11 @@ public class Schedule {
         this.schedulePassword = scheduleRequestDto.getSchedulePassword();
         this.scheduleDatetime = LocalDateTime.now();
     }
+
+    public void update(ScheduleRequestDto requestDto) {
+        this.scheduleTitle = requestDto.getScheduleTitle();
+        this.scheduleContent = requestDto.getScheduleContent();
+        this.scheduleManager = requestDto.getScheduleManager();
+        this.scheduleDatetime = LocalDateTime.now();
+    }
 }

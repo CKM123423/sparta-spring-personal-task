@@ -34,4 +34,11 @@ public class ScheduleController {
     public List<ScheduleResponseDto> viewAllSchedules() {
         return scheduleService.viewAllSchedules();
     }
+
+    // 선택한 일정 수정
+    @PutMapping("/schedule/{scheduleKey}")
+    public ScheduleResponseDto modifySchedule(@PathVariable Long scheduleKey, @RequestBody ScheduleRequestDto requestDto) {
+        return scheduleService.modifySchedule(scheduleKey, requestDto);
+    }
+
 }
