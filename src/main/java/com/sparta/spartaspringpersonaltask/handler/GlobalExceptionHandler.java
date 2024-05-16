@@ -1,5 +1,6 @@
 package com.sparta.spartaspringpersonaltask.handler;
 
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
 import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.exceptions.error.ErrorCode;
@@ -7,14 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.rmi.AlreadyBoundException;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // 이미 삭제된 데이터를 삭제할때(400)
-    @ExceptionHandler(AlreadyBoundException.class)
-    public ResponseEntity<Object> handleAlreadyBoundException(AlreadyBoundException e) {
+    @ExceptionHandler(AlreadyDeletedException.class)
+    public ResponseEntity<Object> handleAlreadyDeletedException(AlreadyDeletedException e) {
         ErrorCode errorCode = ErrorCode.ALREADY_DELETED_EXCEPTION;
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getMessage());
     }
