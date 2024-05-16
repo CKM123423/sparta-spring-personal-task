@@ -1,12 +1,12 @@
 package com.sparta.spartaspringpersonaltask.entity;
 
+import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,11 +21,18 @@ public class Schedule {
     private String scheduleTitle;
     @Column(name = "schedule_content", nullable = false)
     private String scheduleContent;
-    @Column(name = "schedule_manager", nullable = false)
+    @Column(name = "schedule_manager", nullable = false, length = 1000)
     private String scheduleManager;
     @Column(name = "schedule_password", nullable = false)
     private String schedulePassword;
     @Column(name = "schedule_datetime", nullable = false)
-    private Date scheduleDatetime;
+    private LocalDateTime scheduleDatetime;
 
+    public Schedule(ScheduleRequestDto scheduleRequestDto) {
+        this.scheduleTitle = scheduleRequestDto.getScheduleTitle();
+        this.scheduleContent = scheduleRequestDto.getScheduleContent();
+        this.scheduleManager = scheduleRequestDto.getScheduleManager();
+        this.schedulePassword = scheduleRequestDto.getSchedulePassword();
+        this.scheduleDatetime = LocalDateTime.now();
+    }
 }
