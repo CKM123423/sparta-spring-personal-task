@@ -7,6 +7,8 @@ import com.sparta.spartaspringpersonaltask.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
@@ -33,6 +35,14 @@ public class ScheduleService {
 
         // 조회
         return new ScheduleResponseDto(schedule);
+    }
+
+    public List<ScheduleResponseDto> viewAllSchedules() {
+        return scheduleRepository
+                .findAll()
+                .stream()
+                .map(ScheduleResponseDto::new)
+                .toList();
     }
 
     private Schedule findSchedule(Long scheduleKey) {

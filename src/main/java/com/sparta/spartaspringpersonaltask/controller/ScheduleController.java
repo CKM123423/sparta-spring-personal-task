@@ -5,6 +5,8 @@ import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.service.ScheduleService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
@@ -27,4 +29,9 @@ public class ScheduleController {
         return scheduleService.viewSelectedSchedule(scheduleKey);
     }
 
+    // 전체 일정 조회
+    @GetMapping("/schedules")
+    public List<ScheduleResponseDto> viewAllSchedules() {
+        return scheduleService.viewAllSchedules();
+    }
 }
