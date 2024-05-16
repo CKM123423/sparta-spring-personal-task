@@ -3,6 +3,7 @@ package com.sparta.spartaspringpersonaltask.service;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
 import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.repository.ScheduleRepository;
@@ -73,16 +74,22 @@ public class ScheduleService {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
 
+        // 삭제 여부 확인
+        checkDeletionStatus(scheduleKey);
+
         // 비밀번호 확인
         checkPassword(scheduleKey, password);
 
-        // 일정 삭제
-        scheduleRepository.delete(schedule);
+        // 일정 삭제 (소프트 삭제)
+        schedule.setDeletionStatus(true);
+
+        // DB에 저장
+        scheduleRepository.save(schedule);
 
         return scheduleKey;
     }
 
-    // DB에 일정 조회
+    // DB에 일정 존재 여부 확인
     private Schedule findSchedule(Long scheduleKey) {
         return scheduleRepository
                 .findById(scheduleKey)
@@ -100,6 +107,14 @@ public class ScheduleService {
         // 비밀번호가 틀릴경우 예외 발생
         if (!Objects.equals(password, storedPassword)) {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    // 삭제여부 확인
+    private void checkDeletionStatus(Long scheduleKey) {
+        Schedule schedule = findSchedule(scheduleKey);
+        if (schedule.isDeletionStatus()) {
+            throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
         }
     }
 }

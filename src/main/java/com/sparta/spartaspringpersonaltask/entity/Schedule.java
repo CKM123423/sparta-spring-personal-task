@@ -33,12 +33,16 @@ public class Schedule {
     @Column(name = "schedule_datetime", nullable = false)
     private LocalDateTime scheduleDatetime;
 
+    @Column(name = "schedule_deletionStatus", nullable = false)
+    private boolean deletionStatus;
+
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
         this.scheduleTitle = scheduleRequestDto.getScheduleTitle();
         this.scheduleContent = scheduleRequestDto.getScheduleContent();
         this.scheduleManager = scheduleRequestDto.getScheduleManager();
         this.schedulePassword = scheduleRequestDto.getSchedulePassword();
         this.scheduleDatetime = LocalDateTime.now();
+        this.deletionStatus = false;
     }
 
     public void update(ScheduleRequestDto requestDto) {
@@ -46,5 +50,6 @@ public class Schedule {
         this.scheduleContent = requestDto.getScheduleContent();
         this.scheduleManager = requestDto.getScheduleManager();
         this.scheduleDatetime = LocalDateTime.now();
+        this.deletionStatus = false;
     }
 }
