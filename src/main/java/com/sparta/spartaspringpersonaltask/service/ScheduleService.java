@@ -40,6 +40,9 @@ public class ScheduleService {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
 
+        // 삭제 여부 확인
+        checkDeletionStatus(scheduleKey);
+
         // 조회
         return new ScheduleResponseDto(schedule);
     }
@@ -49,6 +52,7 @@ public class ScheduleService {
         return scheduleRepository
                 .findAll()
                 .stream()
+                .filter(schedule -> !schedule.isDeletionStatus())
                 .map(ScheduleResponseDto::new)
                 .toList();
     }
@@ -58,6 +62,9 @@ public class ScheduleService {
     public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
+
+        // 삭제 여부 확인
+        checkDeletionStatus(scheduleKey);
 
         // 비밀번호 확인
         checkPassword(scheduleKey, requestDto.getSchedulePassword());
@@ -111,6 +118,7 @@ public class ScheduleService {
     }
 
     // 삭제여부 확인
+    // 등록을 제외한 모든부분에 들어가야해서 코드 중복이 너무 많음 AOP?
     private void checkDeletionStatus(Long scheduleKey) {
         Schedule schedule = findSchedule(scheduleKey);
         if (schedule.isDeletionStatus()) {
