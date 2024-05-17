@@ -1,16 +1,18 @@
 package com.sparta.spartaspringpersonaltask.entity;
 
 import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "schedules")
 @NoArgsConstructor
 public class Schedule {
@@ -36,11 +38,12 @@ public class Schedule {
     @Column(name = "schedule_deletionStatus", nullable = false)
     private boolean deletionStatus;
 
-    public Schedule(ScheduleRequestDto scheduleRequestDto) {
-        this.scheduleTitle = scheduleRequestDto.getScheduleTitle();
-        this.scheduleContent = scheduleRequestDto.getScheduleContent();
-        this.scheduleManager = scheduleRequestDto.getScheduleManager();
-        this.schedulePassword = scheduleRequestDto.getSchedulePassword();
+    @Builder
+    public Schedule(String scheduleTitle, String scheduleContent, String scheduleManager, String schedulePassword) {
+        this.scheduleTitle = scheduleTitle;
+        this.scheduleContent = scheduleContent;
+        this.scheduleManager = scheduleManager;
+        this.schedulePassword = schedulePassword;
         this.scheduleDatetime = LocalDateTime.now();
         this.deletionStatus = false;
     }
@@ -51,5 +54,21 @@ public class Schedule {
         this.scheduleManager = requestDto.getScheduleManager();
         this.scheduleDatetime = LocalDateTime.now();
         this.deletionStatus = false;
+    }
+
+    public void markAsDeleted() {
+        this.deletionStatus = true;
+    }
+
+    public void checkPassword(String password) {
+        if (!Objects.equals(this.schedulePassword, password)) {
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    public void checkDeletionStatus() {
+        if (this.deletionStatus) {
+            throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
+        }
     }
 }

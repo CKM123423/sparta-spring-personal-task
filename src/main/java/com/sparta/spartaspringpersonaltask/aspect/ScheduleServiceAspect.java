@@ -10,8 +10,11 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+// 보통 AOP 는 로깅, 보안, 트랜젝션 등 로직외 부가기능을 사용할때 주로 사용함
+// 전체적으로 적용되는 부분이 아니고 부분적으로 적용되는 부분이라 AOP 의 의미가 퇴색됨
 @Aspect
 @Component
+@Deprecated
 public class ScheduleServiceAspect {
 
     private final ScheduleRepository scheduleRepository;
