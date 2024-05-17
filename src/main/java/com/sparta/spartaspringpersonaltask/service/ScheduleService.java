@@ -1,5 +1,7 @@
 package com.sparta.spartaspringpersonaltask.service;
 
+import com.sparta.spartaspringpersonaltask.aspect.annotation.CheckDeletionStatus;
+import com.sparta.spartaspringpersonaltask.aspect.annotation.CheckPassword;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.entity.Schedule;
@@ -10,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.sparta.spartaspringpersonaltask.utils.ScheduleUtils.checkDeletionStatus;
-import static com.sparta.spartaspringpersonaltask.utils.ScheduleUtils.checkPassword;
 
 @Service
 public class ScheduleService {
@@ -36,12 +35,10 @@ public class ScheduleService {
     }
 
     // 단일 일정 조회
+    @CheckDeletionStatus
     public ScheduleResponseDto viewSelectedSchedule(Long scheduleKey) {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
-
-        // 삭제 여부 확인
-        checkDeletionStatus(schedule);
 
         // 조회
         return new ScheduleResponseDto(schedule);
@@ -59,15 +56,11 @@ public class ScheduleService {
 
     // 일정 수정
     @Transactional
+    @CheckDeletionStatus
+    @CheckPassword
     public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
-
-        // 삭제 여부 확인
-        checkDeletionStatus(schedule);
-
-        // 비밀번호 확인
-        checkPassword(requestDto.getSchedulePassword(), schedule.getSchedulePassword());
 
         // 수정 내용 저장
         schedule.update(requestDto);
@@ -77,15 +70,11 @@ public class ScheduleService {
     }
 
     // 일정 삭제 기능
+    @CheckDeletionStatus
+    @CheckPassword
     public Long deleteSchedule(Long scheduleKey, String password) {
         // 일정 존재 여부 확인
         Schedule schedule = findSchedule(scheduleKey);
-
-        // 삭제 여부 확인
-        checkDeletionStatus(schedule);
-
-        // 비밀번호 확인
-        checkPassword(password, schedule.getSchedulePassword());
 
         // 일정 삭제 (소프트 삭제)
         schedule.setDeletionStatus(true);
