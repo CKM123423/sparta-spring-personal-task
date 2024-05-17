@@ -49,7 +49,7 @@ public class ScheduleService {
 
     // 전체 일정 조회
     public List<ScheduleResponseDto> viewAllSchedules() {
-        return scheduleRepository.findAllSortedByScheduleDatetimeDesc().stream()
+        return scheduleRepository.findAllByOrderByScheduleDatetimeDesc().stream()
                 .filter(schedule -> !schedule.isDeletionStatus())
                 .map(ScheduleResponseDto::new)
                 .toList();
