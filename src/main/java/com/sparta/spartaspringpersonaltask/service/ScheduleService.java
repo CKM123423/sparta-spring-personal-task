@@ -96,8 +96,7 @@ public class ScheduleService {
 
     // DB에 일정 존재 여부 확인
     private Schedule findSchedule(Long scheduleKey) {
-        return scheduleRepository
-                .findById(scheduleKey)
+        return scheduleRepository.findById(scheduleKey)
                 .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
     }
 
