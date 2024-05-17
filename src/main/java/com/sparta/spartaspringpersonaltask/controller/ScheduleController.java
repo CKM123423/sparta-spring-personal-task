@@ -42,8 +42,6 @@ public class ScheduleController {
     }
 
     // 선택한 일정 삭제
-    // 테스트용 URL 주소
-    // http://localhost:8080/api/schedule/{scheduleKey}/delete?password={password}
     @DeleteMapping("/schedule/{scheduleKey}")
     public Long deleteSchedule(@PathVariable Long scheduleKey, @RequestBody ScheduleRequestDto requestDto) {
         return scheduleService.deleteSchedule(scheduleKey, requestDto);

@@ -49,9 +49,7 @@ public class ScheduleService {
 
     // 전체 일정 조회
     public List<ScheduleResponseDto> viewAllSchedules() {
-        return scheduleRepository
-                .findAll()
-                .stream()
+        return scheduleRepository.findAllSortedByScheduleDatetimeDesc().stream()
                 .filter(schedule -> !schedule.isDeletionStatus())
                 .map(ScheduleResponseDto::new)
                 .toList();
@@ -107,7 +105,8 @@ public class ScheduleService {
     private void checkPassword(Long scheduleKey, String password) {
 
         // DB에 저장된 비밀번호
-        String storedPassword = scheduleRepository.findById(scheduleKey)
+        String storedPassword = scheduleRepository
+                .findById(scheduleKey)
                 .map(Schedule::getSchedulePassword)
                 .orElse(null);
 
