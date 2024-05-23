@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.exceptions.error;
+package com.sparta.spartaspringpersonaltask.global.exceptions.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

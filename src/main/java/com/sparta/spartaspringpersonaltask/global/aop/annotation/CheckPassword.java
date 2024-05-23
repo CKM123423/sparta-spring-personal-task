@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.aspect.annotation;
+package com.sparta.spartaspringpersonaltask.global.aop.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Deprecated
-public @interface CheckDeletionStatus {
+public @interface CheckPassword {
 }

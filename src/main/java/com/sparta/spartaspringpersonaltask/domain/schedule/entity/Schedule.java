@@ -1,8 +1,8 @@
-package com.sparta.spartaspringpersonaltask.entity;
+package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 
-import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

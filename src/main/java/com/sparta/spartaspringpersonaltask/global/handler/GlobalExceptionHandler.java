@@ -1,9 +1,9 @@
-package com.sparta.spartaspringpersonaltask.handler;
+package com.sparta.spartaspringpersonaltask.global.handler;
 
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.NotFoundException;
-import com.sparta.spartaspringpersonaltask.exceptions.error.ErrorCode;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.error.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

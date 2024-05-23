@@ -1,6 +1,6 @@
-package com.sparta.spartaspringpersonaltask.dto;
+package com.sparta.spartaspringpersonaltask.global.dto;
 
-import com.sparta.spartaspringpersonaltask.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import lombok.Getter;
 
 @Getter

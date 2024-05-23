@@ -28,6 +28,9 @@ dependencies {
     // Springdoc-openapi
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     // Spring AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 

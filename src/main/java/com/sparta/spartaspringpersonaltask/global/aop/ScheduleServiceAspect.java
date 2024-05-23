@@ -1,10 +1,10 @@
-package com.sparta.spartaspringpersonaltask.aspect;
+package com.sparta.spartaspringpersonaltask.global.aop;
 
-import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
-import com.sparta.spartaspringpersonaltask.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.NotFoundException;
-import com.sparta.spartaspringpersonaltask.repository.ScheduleRepository;
-import com.sparta.spartaspringpersonaltask.utils.ScheduleUtils;
+import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
+import com.sparta.spartaspringpersonaltask.global.utils.ScheduleUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ScheduleServiceAspect {
     }
 
     @Before(value =
-            "@annotation(com.sparta.spartaspringpersonaltask.aspect.annotation.CheckDeletionStatus) &&" +
+            "@annotation(com.sparta.spartaspringpersonaltask.global.aop.annotation.CheckDeletionStatus) &&" +
                     "args(scheduleKey)",
             argNames = "scheduleKey")
     public void checkDeletionStatus(Long scheduleKey) {
@@ -35,7 +35,7 @@ public class ScheduleServiceAspect {
     }
 
     @Before(value =
-            "@annotation(com.sparta.spartaspringpersonaltask.aspect.annotation.CheckPassword) &&" +
+            "@annotation(com.sparta.spartaspringpersonaltask.global.aop.annotation.CheckPassword) &&" +
                     "args(scheduleKey, password)",
             argNames = "scheduleKey, password")
     public void checkPassword(Long scheduleKey, String password) {
@@ -45,7 +45,7 @@ public class ScheduleServiceAspect {
     }
 
     @Before(value =
-            "@annotation(com.sparta.spartaspringpersonaltask.aspect.annotation.CheckPassword) &&" +
+            "@annotation(com.sparta.spartaspringpersonaltask.global.aop.annotation.CheckPassword) &&" +
                     "args(scheduleKey, requestDto)",
             argNames = "scheduleKey, requestDto")
     public void checkPasswordWithRequestDto(Long scheduleKey, ScheduleRequestDto requestDto) {

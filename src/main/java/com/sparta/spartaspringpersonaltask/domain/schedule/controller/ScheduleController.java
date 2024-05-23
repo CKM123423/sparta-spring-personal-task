@@ -1,8 +1,8 @@
-package com.sparta.spartaspringpersonaltask.controller;
+package com.sparta.spartaspringpersonaltask.domain.schedule.controller;
 
-import com.sparta.spartaspringpersonaltask.dto.ScheduleRequestDto;
-import com.sparta.spartaspringpersonaltask.dto.ScheduleResponseDto;
-import com.sparta.spartaspringpersonaltask.service.ScheduleService;
+import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.global.dto.ScheduleResponseDto;
+import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.sparta.spartaspringpersonaltask.utils;
+package com.sparta.spartaspringpersonaltask.global.utils;
 
-import com.sparta.spartaspringpersonaltask.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
 
 import java.util.Objects;
 

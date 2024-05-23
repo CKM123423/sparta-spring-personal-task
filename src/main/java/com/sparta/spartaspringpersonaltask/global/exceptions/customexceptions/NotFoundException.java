@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.exceptions.customexceptions;
+package com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
