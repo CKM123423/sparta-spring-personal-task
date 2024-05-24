@@ -3,6 +3,7 @@ package com.sparta.spartaspringpersonaltask.global.exceptions.error;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 @AllArgsConstructor
@@ -15,4 +16,9 @@ public enum ErrorCode{
 
     private final HttpStatus status;
     private final String message;
+
+    // HTTP 상태코드와 message 를 반환
+    public ResponseEntity<Object> buildResponse() {
+        return ResponseEntity.status(status).body(message);
+    }
 }
