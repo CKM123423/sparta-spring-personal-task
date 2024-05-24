@@ -22,20 +22,15 @@ public class ScheduleService {
     }
 
     // 일정 등록
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         // DTO -> Entity
-        Schedule schedule = Schedule.builder()
-                .scheduleTitle(scheduleRequestDto.getScheduleTitle())
-                .scheduleContent(scheduleRequestDto.getScheduleContent())
-                .scheduleManager(scheduleRequestDto.getScheduleManager())
-                .schedulePassword(scheduleRequestDto.getSchedulePassword())
-                .build();
+        Schedule schedule = toEntity(requestDto);
 
         // DB 저장
         scheduleRepository.save(schedule);
 
         // Entity -> DTO
-        return new ScheduleResponseDto(schedule);
+        return toDto(schedule);
     }
 
     // 단일 일정 조회
@@ -47,7 +42,7 @@ public class ScheduleService {
         schedule.checkDeletionStatus();
 
         // 조회
-        return new ScheduleResponseDto(schedule);
+        return toDto(schedule);
     }
 
     // 전체 일정 조회
@@ -62,31 +57,33 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
         // 일정 존재 여부 확인 및 객체 생성
+        Schedule scheduleToUpdate = toEntity(requestDto);
         Schedule schedule = findSchedule(scheduleKey);
 
         // 삭제 여부 확인
         schedule.checkDeletionStatus();
 
         // 비밀번호 확인
-        schedule.checkPassword(requestDto.getSchedulePassword());
+        schedule.checkPassword(scheduleToUpdate.getSchedulePassword());
 
         // 수정 내용 저장
-        schedule.update(requestDto);
+        schedule.update(scheduleToUpdate);
 
         // 수정 내용 조회
-        return new ScheduleResponseDto(schedule);
+        return toDto(schedule);
     }
 
     // 일정 삭제 기능
     public String deleteSchedule(Long scheduleKey, ScheduleDeleteRequestDto requestDto) {
         // 일정 존재 여부 확인 및 객체 생성
+        String inputPassword = requestDto.getSchedulePassword();
         Schedule schedule = findSchedule(scheduleKey);
 
         // 삭제 여부 확인
         schedule.checkDeletionStatus();
 
         // 비밀번호 확인
-        schedule.checkPassword(requestDto.getSchedulePassword());
+        schedule.checkPassword(inputPassword);
 
         // 일정 삭제 (소프트 삭제)
         schedule.deletedTime();
@@ -101,5 +98,19 @@ public class ScheduleService {
     private Schedule findSchedule(Long scheduleKey) {
         return scheduleRepository.findById(scheduleKey)
                 .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
+    }
+
+
+    private Schedule toEntity(ScheduleRequestDto requestDto) {
+        return Schedule.builder()
+                .scheduleTitle(requestDto.getScheduleTitle())
+                .scheduleContent(requestDto.getScheduleContent())
+                .scheduleManager(requestDto.getScheduleManager())
+                .schedulePassword(requestDto.getSchedulePassword())
+                .build();
+    }
+
+    private ScheduleResponseDto toDto(Schedule schedule) {
+        return new ScheduleResponseDto(schedule);
     }
 }

@@ -21,8 +21,8 @@ public class ScheduleController {
 
     // 일정 등록
     @PostMapping("/schedule/create")
-    public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto scheduleRequestDto) {
-        return scheduleService.createSchedule(scheduleRequestDto);
+    public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto requestDto) {
+        return scheduleService.createSchedule(requestDto);
     }
 
     // 단일 일정 조회

@@ -23,7 +23,7 @@ public class Schedule {
     @Column(name = "schedule_title", nullable = false, length = 200)
     private String scheduleTitle;
 
-    @Column(name = "schedule_content", nullable = false)
+    @Column(name = "schedule_content")
     private String scheduleContent;
 
     @Column(name = "schedule_manager", nullable = false)
@@ -48,10 +48,10 @@ public class Schedule {
         this.deletionStatus = null;
     }
 
-    public void update(ScheduleRequestDto requestDto) {
-        this.scheduleTitle = requestDto.getScheduleTitle();
-        this.scheduleContent = requestDto.getScheduleContent();
-        this.scheduleManager = requestDto.getScheduleManager();
+    public void update(Schedule schedule) {
+        this.scheduleTitle = schedule.getScheduleTitle();
+        this.scheduleContent = schedule.getScheduleContent();
+        this.scheduleManager = schedule.getScheduleManager();
         this.scheduleDatetime = LocalDateTime.now();
     }
 
