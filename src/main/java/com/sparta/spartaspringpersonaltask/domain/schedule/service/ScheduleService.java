@@ -1,5 +1,6 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.service;
 
+import com.sparta.spartaspringpersonaltask.global.dto.ScheduleDeleteRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
@@ -23,7 +24,12 @@ public class ScheduleService {
     // 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         // DTO -> Entity
-        Schedule schedule = scheduleRequestDto.toEntity();
+        Schedule schedule = Schedule.builder()
+                .scheduleTitle(scheduleRequestDto.getScheduleTitle())
+                .scheduleContent(scheduleRequestDto.getScheduleContent())
+                .scheduleManager(scheduleRequestDto.getScheduleManager())
+                .schedulePassword(scheduleRequestDto.getSchedulePassword())
+                .build();
 
         // DB 저장
         scheduleRepository.save(schedule);
@@ -34,7 +40,7 @@ public class ScheduleService {
 
     // 단일 일정 조회
     public ScheduleResponseDto viewSelectedSchedule(Long scheduleKey) {
-        // 일정 존재 여부 확인 및 객체 정보 저장
+        // 일정 존재 여부 확인 및 객체 생성
         Schedule schedule = findSchedule(scheduleKey);
 
         // 삭제 여부 확인
@@ -47,7 +53,7 @@ public class ScheduleService {
     // 전체 일정 조회
     public List<ScheduleResponseDto> viewAllSchedules() {
         return scheduleRepository.findAllByOrderByScheduleDatetimeDesc().stream()
-                .filter(schedule -> !schedule.isDeletionStatus())
+                .filter(schedule -> schedule.getDeletionStatus() == null)
                 .map(ScheduleResponseDto::new)
                 .toList();
     }
@@ -55,7 +61,7 @@ public class ScheduleService {
     // 일정 수정
     @Transactional
     public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
-        // 일정 존재 여부 확인 및 객체 정보 저장
+        // 일정 존재 여부 확인 및 객체 생성
         Schedule schedule = findSchedule(scheduleKey);
 
         // 삭제 여부 확인
@@ -72,8 +78,8 @@ public class ScheduleService {
     }
 
     // 일정 삭제 기능
-    public Long deleteSchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
-        // 일정 존재 여부 확인 및 객체 정보 저장
+    public String deleteSchedule(Long scheduleKey, ScheduleDeleteRequestDto requestDto) {
+        // 일정 존재 여부 확인 및 객체 생성
         Schedule schedule = findSchedule(scheduleKey);
 
         // 삭제 여부 확인
@@ -83,12 +89,12 @@ public class ScheduleService {
         schedule.checkPassword(requestDto.getSchedulePassword());
 
         // 일정 삭제 (소프트 삭제)
-        schedule.markAsDeleted();
+        schedule.deletedTime();
 
         // DB에 저장
         scheduleRepository.save(schedule);
 
-        return scheduleKey;
+        return scheduleKey + "번 일정이 삭제처리 되었습니다.";
     }
 
     // DB 에서 일정을 찾아 반환

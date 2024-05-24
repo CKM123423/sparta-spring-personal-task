@@ -20,13 +20,13 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleKey;
 
-    @Column(name = "schedule_title", nullable = false)
+    @Column(name = "schedule_title", nullable = false, length = 200)
     private String scheduleTitle;
 
     @Column(name = "schedule_content", nullable = false)
     private String scheduleContent;
 
-    @Column(name = "schedule_manager", nullable = false, length = 1000)
+    @Column(name = "schedule_manager", nullable = false)
     private String scheduleManager;
 
     @Column(name = "schedule_password", nullable = false)
@@ -35,8 +35,8 @@ public class Schedule {
     @Column(name = "schedule_datetime", nullable = false)
     private LocalDateTime scheduleDatetime;
 
-    @Column(name = "schedule_deletionStatus", nullable = false)
-    private boolean deletionStatus;
+    @Column(name = "schedule_deletionStatus")
+    private LocalDateTime deletionStatus;
 
     @Builder
     public Schedule(String scheduleTitle, String scheduleContent, String scheduleManager, String schedulePassword) {
@@ -45,7 +45,7 @@ public class Schedule {
         this.scheduleManager = scheduleManager;
         this.schedulePassword = schedulePassword;
         this.scheduleDatetime = LocalDateTime.now();
-        this.deletionStatus = false;
+        this.deletionStatus = null;
     }
 
     public void update(ScheduleRequestDto requestDto) {
@@ -53,11 +53,10 @@ public class Schedule {
         this.scheduleContent = requestDto.getScheduleContent();
         this.scheduleManager = requestDto.getScheduleManager();
         this.scheduleDatetime = LocalDateTime.now();
-        this.deletionStatus = false;
     }
 
-    public void markAsDeleted() {
-        this.deletionStatus = true;
+    public void deletedTime() {
+        this.deletionStatus = LocalDateTime.now();
     }
 
     public void checkPassword(String password) {
@@ -67,7 +66,7 @@ public class Schedule {
     }
 
     public void checkDeletionStatus() {
-        if (this.deletionStatus) {
+        if (this.deletionStatus != null) {
             throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
         }
     }

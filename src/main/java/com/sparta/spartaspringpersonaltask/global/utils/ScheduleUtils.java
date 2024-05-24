@@ -13,7 +13,7 @@ public class ScheduleUtils {
 
     // 일정 삭제 여부 확인
     public static void checkDeletionStatus(Schedule schedule) {
-        if (schedule.isDeletionStatus()) {
+        if (schedule.getDeletionStatus() != null) {
             throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
         }
     }
