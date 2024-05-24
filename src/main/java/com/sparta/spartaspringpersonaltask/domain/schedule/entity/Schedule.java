@@ -1,6 +1,6 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 
-import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
 import jakarta.persistence.*;
@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,23 +21,24 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleKey;
 
-    @Column(name = "schedule_title", nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String scheduleTitle;
 
-    @Column(name = "schedule_content")
     private String scheduleContent;
 
-    @Column(name = "schedule_manager", nullable = false)
+    @Column(nullable = false)
     private String scheduleManager;
 
-    @Column(name = "schedule_password", nullable = false)
+    @Column(nullable = false)
     private String schedulePassword;
 
-    @Column(name = "schedule_datetime", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime scheduleDatetime;
 
-    @Column(name = "schedule_deletionStatus")
     private LocalDateTime deletionStatus;
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Comment> commentList;
 
     @Builder
     public Schedule(String scheduleTitle, String scheduleContent, String scheduleManager, String schedulePassword) {

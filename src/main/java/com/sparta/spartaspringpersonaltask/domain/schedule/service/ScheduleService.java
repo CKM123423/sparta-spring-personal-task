@@ -1,8 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.service;
 
-import com.sparta.spartaspringpersonaltask.global.dto.ScheduleDeleteRequestDto;
-import com.sparta.spartaspringpersonaltask.global.dto.ScheduleRequestDto;
-import com.sparta.spartaspringpersonaltask.global.dto.ScheduleResponseDto;
+import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleDeleteRequestDto;
+import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
+import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;

@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.global.dto;
+package com.sparta.spartaspringpersonaltask.global.dto.schedule;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

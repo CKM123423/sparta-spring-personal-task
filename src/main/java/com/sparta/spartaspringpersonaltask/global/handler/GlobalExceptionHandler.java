@@ -5,8 +5,8 @@ import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.In
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.global.exceptions.error.ErrorCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,9 +16,10 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
     // 유효성검사 실패시 오류문 출력(400)
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<Object> handleValidationExceptions(BindException ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
 
         // 발생한 오류들을 전부 돌면서 오류문을 전부 추가
@@ -42,7 +43,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    // 선택한 일정을 찾을 수 없을때(404)
+    // 찾을 수 없을때(404)
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         return ErrorCode.NOT_FOUND_EXCEPTION.buildResponse();
