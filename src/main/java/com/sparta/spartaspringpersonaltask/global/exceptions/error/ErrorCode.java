@@ -12,6 +12,7 @@ public enum ErrorCode{
     // 400번대
     ALREADY_DELETED_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 삭제된 일정입니다."),
     INVALID_PASSWORD_EXCEPTION(HttpStatus.UNAUTHORIZED, "비밀번호가 맞지 않습니다."),
+    INVALID_USERNAME_EXCEPTION(HttpStatus.UNAUTHORIZED, "사용자 이름이 맞지 않습니다."),
     NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "선택한 항목을 찾지 못하였습니다.");
 
     private final HttpStatus status;

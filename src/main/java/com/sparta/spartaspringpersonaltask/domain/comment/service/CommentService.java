@@ -7,6 +7,7 @@ import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRe
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,8 +23,7 @@ public class CommentService {
 
     /**
      * 댓글 등록 기능
-     *
-     * @param id 댓글을 작성할 스케줄의 고유번호
+     * @param scheduleKey 댓글을 작성할 스케줄의 고유번호
      * @param requestDto 댓글내용, 사용자이름
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      *
@@ -40,13 +40,43 @@ public class CommentService {
         return toDto(comment);
     }
 
+    /**
+     * 댓글 수정 기능
+     * @param commentKey 댓글 고유번호
+     * @param requestDto 댓글내용, 사용자이름
+     * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 수정된 댓글내용, 댓글작성시간
+     */
+    @Transactional
+    public CommentResponseDto updateComment(Long commentKey, CommentRequestDto requestDto) {
+        Comment comment = findComment(commentKey);
+        Comment commentToUpdate = toEntity(comment.getSchedule(), requestDto);
+
+        comment.getSchedule().checkDeletionStatus();
+
+        comment.checkUserName(commentToUpdate.getCommentUserName());
+
+        comment.update(commentToUpdate);
+
+        return toDto(comment);
+    }
+
+
+    /**
+     * DB 에서 댓글을 찾아 반환
+     * @param commentId 댓글 고유번호
+     * @return 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
+     */
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("선택한 댓글이 없습니다.")
+        );
+    }
 
     /**
      *  dto -> entity
-     *
      * @param schedule 스케줄 entity
      * @param requestDto 댓글내용, 사용자이름
-     * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
+     * @return 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
      */
     private Comment toEntity(Schedule schedule, CommentRequestDto requestDto) {
         return Comment.builder()
@@ -58,8 +88,7 @@ public class CommentService {
 
     /**
      * entity -> dto
-     *
-     * @param comment 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
+     * @param comment 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      */
     private CommentResponseDto toDto(Comment comment) {

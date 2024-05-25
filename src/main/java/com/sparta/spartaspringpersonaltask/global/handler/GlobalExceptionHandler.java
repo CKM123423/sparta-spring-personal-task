@@ -2,6 +2,7 @@ package com.sparta.spartaspringpersonaltask.global.handler;
 
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidUserNameException;
 import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.global.exceptions.error.ErrorCode;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
 
-    // 유효성검사 실패시 오류문 출력(400)
+    // 유효성검사 실패시 오류문 출력
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
@@ -30,20 +31,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    // 이미 삭제된 데이터를 삭제할때(400)
+    // 이미 삭제된 데이터를 삭제할때
     @ExceptionHandler(AlreadyDeletedException.class)
     public ResponseEntity<Object> handleAlreadyDeletedException(AlreadyDeletedException e) {
         return ErrorCode.ALREADY_DELETED_EXCEPTION.buildResponse();
     }
 
-    // 비밀번호가 틀렸을때(401)
+    // 비밀번호가 틀렸을때
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException e) {
         return ErrorCode.INVALID_PASSWORD_EXCEPTION.buildResponse();
     }
 
+    // 사용자 이름이 틀렸을때
+    @ExceptionHandler(InvalidUserNameException.class)
+    public ResponseEntity<Object> handleInvalidUserNameException(InvalidUserNameException e) {
+        return ErrorCode.INVALID_USERNAME_EXCEPTION.buildResponse();
+    }
 
-    // 찾을 수 없을때(404)
+    // 해당 정보를 찾을 수 없을때
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         return ErrorCode.NOT_FOUND_EXCEPTION.buildResponse();

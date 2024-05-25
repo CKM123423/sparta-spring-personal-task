@@ -57,8 +57,8 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
         // 일정 존재 여부 확인 및 객체 생성
-        Schedule scheduleToUpdate = toEntity(requestDto);
         Schedule schedule = findSchedule(scheduleKey);
+        Schedule scheduleToUpdate = toEntity(requestDto);
 
         // 삭제 여부 확인
         schedule.checkDeletionStatus();
@@ -74,6 +74,7 @@ public class ScheduleService {
     }
 
     // 일정 삭제 기능
+    @Transactional
     public String deleteSchedule(Long scheduleKey, ScheduleDeleteRequestDto requestDto) {
         // 일정 존재 여부 확인 및 객체 생성
         String inputPassword = requestDto.getSchedulePassword();
@@ -87,9 +88,6 @@ public class ScheduleService {
 
         // 일정 삭제 (소프트 삭제)
         schedule.deletedTime();
-
-        // DB에 저장
-        scheduleRepository.save(schedule);
 
         return scheduleKey + "번 일정이 삭제처리 되었습니다.";
     }
