@@ -2,7 +2,7 @@ package com.sparta.spartaspringpersonaltask.global.aop;
 
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
 import com.sparta.spartaspringpersonaltask.global.utils.ScheduleUtils;
 import org.aspectj.lang.annotation.Aspect;

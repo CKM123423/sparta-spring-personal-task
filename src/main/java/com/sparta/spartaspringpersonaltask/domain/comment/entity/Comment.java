@@ -1,7 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.comment.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidUserNameException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +52,21 @@ public class Comment {
 
     public void checkUserName(String commentUserName) {
         if (!Objects.equals(this.commentUserName, commentUserName)) {
-            throw new InvalidUserNameException("사용자 이름이 맞지 않습니다.");
+            throw new InvalidException("사용자 이름이 맞지 않습니다.");
         }
+    }
+
+    public void checkDeletionStatus() {
+        if (this.schedule.getDeletionStatus() != null){
+            throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
+        }
+
+        if (this.commentDeletionStatus != null) {
+            throw new AlreadyDeletedException("이미 삭제된 댓글입니다.");
+        }
+    }
+
+    public void deletedTime() {
+        this.commentDeletionStatus = LocalDateTime.now();
     }
 }

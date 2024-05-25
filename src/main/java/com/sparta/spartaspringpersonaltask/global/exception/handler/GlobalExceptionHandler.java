@@ -1,10 +1,8 @@
-package com.sparta.spartaspringpersonaltask.global.handler;
+package com.sparta.spartaspringpersonaltask.global.exception.handler;
 
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidUserNameException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.error.ErrorCode;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,25 +32,20 @@ public class GlobalExceptionHandler {
     // 이미 삭제된 데이터를 삭제할때
     @ExceptionHandler(AlreadyDeletedException.class)
     public ResponseEntity<Object> handleAlreadyDeletedException(AlreadyDeletedException e) {
-        return ErrorCode.ALREADY_DELETED_EXCEPTION.buildResponse();
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    // 비밀번호가 틀렸을때
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException e) {
-        return ErrorCode.INVALID_PASSWORD_EXCEPTION.buildResponse();
+    // 입력값이 틀렸을때
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<Object> handleInvalidException(InvalidException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    // 사용자 이름이 틀렸을때
-    @ExceptionHandler(InvalidUserNameException.class)
-    public ResponseEntity<Object> handleInvalidUserNameException(InvalidUserNameException e) {
-        return ErrorCode.INVALID_USERNAME_EXCEPTION.buildResponse();
-    }
 
     // 해당 정보를 찾을 수 없을때
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
-        return ErrorCode.NOT_FOUND_EXCEPTION.buildResponse();
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
 }

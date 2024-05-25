@@ -4,9 +4,10 @@ import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.comment.repository.CommentRepository;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
+import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentDeleteRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class CommentService {
                 () -> new NotFoundException("선택한 일정이 없습니다.")
         );
 
+        schedule.checkDeletionStatus();
+
         Comment comment = toEntity(schedule, requestDto);
 
         commentRepository.save(comment);
@@ -53,6 +56,8 @@ public class CommentService {
 
         comment.getSchedule().checkDeletionStatus();
 
+        comment.checkDeletionStatus();
+
         comment.checkUserName(commentToUpdate.getCommentUserName());
 
         comment.update(commentToUpdate);
@@ -60,6 +65,25 @@ public class CommentService {
         return toDto(comment);
     }
 
+    /**
+     * 댓글 삭제 기능
+     * @param commentKey 댓글 고유번호
+     * @param requestDto 사용자 이름
+     * @return 댓글 삭제 메세지
+     */
+    @Transactional
+    public String deleteComment(Long commentKey, CommentDeleteRequestDto requestDto) {
+        Comment comment = findComment(commentKey);
+        String inputUserName = requestDto.getUserName();
+
+        comment.checkDeletionStatus();
+
+        comment.checkUserName(inputUserName);
+
+        comment.deletedTime();
+
+        return commentKey + "번 댓글이 삭제 되었습니다.";
+    }
 
     /**
      * DB 에서 댓글을 찾아 반환

@@ -1,10 +1,11 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.service;
 
+import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleDeleteRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.NotFoundException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,14 @@ public class ScheduleService {
         // 일정 삭제 (소프트 삭제)
         schedule.deletedTime();
 
-        return scheduleKey + "번 일정이 삭제처리 되었습니다.";
+        // 일정에 연동된 댓글 삭제
+        List<Comment> deleteComment = schedule.getCommentList();
+
+        for (Comment comment : deleteComment) {
+            comment.deletedTime();
+        }
+
+        return scheduleKey + "번 일정이 삭제 되었습니다.";
     }
 
     // DB 에서 일정을 찾아 반환

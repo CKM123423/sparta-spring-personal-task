@@ -1,8 +1,8 @@
 package com.sparta.spartaspringpersonaltask.global.utils;
 
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 
 import java.util.Objects;
 
@@ -21,7 +21,7 @@ public class ScheduleUtils {
     // 비밀번호 일치 확인
     public static void checkPassword(String inputPassword, String storedPassword) {
         if (!Objects.equals(inputPassword, storedPassword)) {
-            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidException("비밀번호가 일치하지 않습니다.");
         }
     }
 }

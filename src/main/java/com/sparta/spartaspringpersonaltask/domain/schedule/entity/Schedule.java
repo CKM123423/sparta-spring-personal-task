@@ -1,8 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.AlreadyDeletedException;
-import com.sparta.spartaspringpersonaltask.global.exceptions.customexceptions.InvalidPasswordException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -63,7 +63,7 @@ public class Schedule {
 
     public void checkPassword(String password) {
         if (!Objects.equals(this.schedulePassword, password)) {
-            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidException("비밀번호가 일치하지 않습니다.");
         }
     }
 
