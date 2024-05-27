@@ -54,5 +54,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleDuplicateException(DuplicateException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
-
 }
