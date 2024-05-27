@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Table(name = "comment")
+@Table(name = "comments")
 @NoArgsConstructor
 public class Comment {
 
@@ -52,7 +52,7 @@ public class Comment {
 
     public void checkUserName(String commentUserName) {
         if (!Objects.equals(this.commentUserName, commentUserName)) {
-            throw new InvalidException("사용자 이름이 맞지 않습니다.");
+            throw new InvalidException("사용자 이름이 일치하지 않습니다.");
         }
     }
 

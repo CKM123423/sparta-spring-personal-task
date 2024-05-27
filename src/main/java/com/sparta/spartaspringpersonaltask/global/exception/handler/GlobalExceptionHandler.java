@@ -1,6 +1,7 @@
 package com.sparta.spartaspringpersonaltask.global.exception.handler;
 
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.DuplicateException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,12 @@ public class GlobalExceptionHandler {
     // 해당 정보를 찾을 수 없을때
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    // 중복된 정보일 때
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<Object> handleDuplicateException(DuplicateException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
