@@ -34,8 +34,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtUtil.getJwtFromHeader(request, JwtUtil.AUTHORIZATION_HEADER);
 
-        if (StringUtils.hasText(accessToken)) {
-            if (!jwtUtil.validateToken(accessToken, JwtUtil.AUTHORIZATION_HEADER)) {
+        if (StringUtils.hasText(accessToken)) { // access token 내용확인
+            if (jwtUtil.validateToken(accessToken, JwtUtil.AUTHORIZATION_HEADER)) { // access token 유효성 확인
+
+                Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
+                setAuthentication(claims.getSubject());
+
+            } else {
                 String refreshToken = jwtUtil.getJwtFromHeader(request, JwtUtil.REFRESH_HEADER);
 
                 if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken, JwtUtil.REFRESH_HEADER)) {
@@ -50,14 +55,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
                     setAuthentication(username);
                 } else {
-                    log.error("리프레시 토큰이 유효하지 않거나 만료되었습니다.");
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    log.error("리프레시 토큰이 유효하지 않거나 거부되었습니다.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "다시 로그인 해주세요");
                     return;
                 }
-            } else {
-                Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
-                setAuthentication(claims.getSubject());
             }
+        } else {
+            log.error("억세스 토큰이 존재하지 않거나 거부되었습니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "다시 로그인 해주세요");
+            return;
         }
 
         filterChain.doFilter(request, response);

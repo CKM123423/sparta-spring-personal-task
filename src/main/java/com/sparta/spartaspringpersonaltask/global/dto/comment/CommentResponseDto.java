@@ -17,7 +17,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.commentKey = comment.getCommentKey();
         this.scheduleId = comment.getSchedule().getScheduleKey();
-        this.commentUserName = comment.getCommentUserName();
+        this.commentUserName = comment.getUser().getUserNickname();
         this.commentContent = comment.getCommentContent();
         this.commentDatetime = comment.getCommentDatetime();
     }

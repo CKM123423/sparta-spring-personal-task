@@ -1,7 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.service;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
-import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleDeleteRequestDto;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
+import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
@@ -16,16 +17,19 @@ import java.util.List;
 @Service
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
     // 일정 등록
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, String userName) {
         // DTO -> Entity
-        Schedule schedule = toEntity(requestDto);
+        User user = findUser(userName);
+        Schedule schedule = toSchedule(user, requestDto);
 
         // DB 저장
         scheduleRepository.save(schedule);
@@ -36,13 +40,10 @@ public class ScheduleService {
 
     // 단일 일정 조회
     public ScheduleResponseDto viewSelectedSchedule(Long scheduleKey) {
-        // 일정 존재 여부 확인 및 객체 생성
-        Schedule schedule = findSchedule(scheduleKey);
+        // 일정 유효성 확인 및 객체 생성
+        Schedule schedule = retrieveSchedule(scheduleKey);
 
-        // 삭제 여부 확인
-        schedule.checkDeletionStatus();
-
-        // 조회
+        // Entity -> DTO
         return toDto(schedule);
     }
 
@@ -56,16 +57,14 @@ public class ScheduleService {
 
     // 일정 수정
     @Transactional
-    public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto) {
-        // 일정 존재 여부 확인 및 객체 생성
-        Schedule schedule = findSchedule(scheduleKey);
-        Schedule scheduleToUpdate = toEntity(requestDto);
+    public ScheduleResponseDto modifySchedule(Long scheduleKey, ScheduleRequestDto requestDto, String userName) {
+        // 일정 유효성 확인 및 객체 생성
+        Schedule schedule = retrieveSchedule(scheduleKey);
+        User user = findUser(userName);
+        Schedule scheduleToUpdate = toSchedule(user, requestDto);
 
-        // 삭제 여부 확인
-        schedule.checkDeletionStatus();
-
-        // 비밀번호 확인
-        schedule.checkPassword(scheduleToUpdate.getSchedulePassword());
+        // 사용자 확인
+        schedule.checkUser(scheduleToUpdate.getUser());
 
         // 수정 내용 저장
         schedule.update(scheduleToUpdate);
@@ -76,21 +75,18 @@ public class ScheduleService {
 
     // 일정 삭제 기능
     @Transactional
-    public String deleteSchedule(Long scheduleKey, ScheduleDeleteRequestDto requestDto) {
+    public String deleteSchedule(Long scheduleKey, String userName) {
         // 일정 존재 여부 확인 및 객체 생성
-        String inputPassword = requestDto.getSchedulePassword();
-        Schedule schedule = findSchedule(scheduleKey);
+        Schedule schedule = retrieveSchedule(scheduleKey);
+        User user = findUser(userName);
 
-        // 삭제 여부 확인
-        schedule.checkDeletionStatus();
-
-        // 비밀번호 확인
-        schedule.checkPassword(inputPassword);
+        // 사용자 확인
+        schedule.checkUser(user);
 
         // 일정 삭제 (소프트 삭제)
         schedule.deletedTime();
 
-        // 일정에 연동된 댓글 삭제
+        // 일정에 연동된 댓글 삭제 (소프트 삭제)
         List<Comment> deleteComment = schedule.getCommentList();
 
         for (Comment comment : deleteComment) {
@@ -100,19 +96,26 @@ public class ScheduleService {
         return scheduleKey + "번 일정이 삭제 되었습니다.";
     }
 
-    // DB 에서 일정을 찾아 반환
-    private Schedule findSchedule(Long scheduleKey) {
-        return scheduleRepository.findById(scheduleKey)
-                .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
+    // 일정 찾고 유효성 확인
+    private Schedule retrieveSchedule(Long scheduleKey) {
+        Schedule schedule = scheduleRepository.findById(scheduleKey).orElseThrow(
+                () -> new NotFoundException("해당하는 일정이 없습니다.")
+        );
+        schedule.checkDeletionStatus();
+        return schedule;
     }
 
+    private User findUser(String userName) {
+        return userRepository.findByUserName(userName).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
+        );
+    }
 
-    private Schedule toEntity(ScheduleRequestDto requestDto) {
+    private Schedule toSchedule(User user, ScheduleRequestDto requestDto) {
         return Schedule.builder()
+                .user(user)
                 .scheduleTitle(requestDto.getScheduleTitle())
                 .scheduleContent(requestDto.getScheduleContent())
-                .scheduleManager(requestDto.getScheduleManager())
-                .schedulePassword(requestDto.getSchedulePassword())
                 .build();
     }
 

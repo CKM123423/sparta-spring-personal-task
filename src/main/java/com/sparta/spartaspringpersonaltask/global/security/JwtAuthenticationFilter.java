@@ -57,10 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 로그인 성공 메시지를 응답 바디에 추가
         String successMessage = "로그인에 성공했습니다.";
-        response.setContentType("text/plain; charset=utf-8");
-        response.getWriter().write(successMessage);
-        response.getWriter().flush();
-        response.getWriter().close();
+        responseWriter(response, successMessage);
 
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -72,10 +69,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 실패 메시지를 응답 바디에 추가
         String errorMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.";
+        responseWriter(response, errorMessage);
+    }
+
+    private void responseWriter(HttpServletResponse response, String message) throws IOException {
         response.setContentType("text/plain; charset=utf-8");
-        response.getWriter().write(errorMessage);
+        response.getWriter().write(message);
         response.getWriter().flush();
         response.getWriter().close();
     }
-
 }

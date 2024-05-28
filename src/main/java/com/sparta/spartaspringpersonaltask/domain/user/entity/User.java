@@ -1,11 +1,14 @@
 package com.sparta.spartaspringpersonaltask.domain.user.entity;
 
+import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
+import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,6 +38,12 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime userCreatedDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> commentList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> scheduleList;
 
     @Builder
     public User(String userNickname, String userName, String userPassword, String email, UserRoleEnum role) {

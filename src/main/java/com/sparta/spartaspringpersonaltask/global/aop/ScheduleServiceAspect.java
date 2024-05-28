@@ -41,7 +41,7 @@ public class ScheduleServiceAspect {
     public void checkPassword(Long scheduleKey, String password) {
         Schedule schedule = scheduleRepository.findById(scheduleKey)
                 .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
-        ScheduleUtils.checkPassword(password, schedule.getSchedulePassword());
+//        ScheduleUtils.checkPassword(password, schedule.getSchedulePassword());
     }
 
     @Before(value =
@@ -51,7 +51,7 @@ public class ScheduleServiceAspect {
     public void checkPasswordWithRequestDto(Long scheduleKey, ScheduleRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(scheduleKey)
                 .orElseThrow(() -> new NotFoundException("선택한 일정이 없습니다."));
-        ScheduleUtils.checkPassword(requestDto.getSchedulePassword(), schedule.getSchedulePassword());
+//        ScheduleUtils.checkPassword(requestDto.getSchedulePassword(), schedule.getSchedulePassword());
     }
 
 }

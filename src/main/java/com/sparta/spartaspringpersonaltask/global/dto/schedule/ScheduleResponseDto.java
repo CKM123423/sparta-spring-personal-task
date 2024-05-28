@@ -17,7 +17,7 @@ public class ScheduleResponseDto {
         this.scheduleKey = schedule.getScheduleKey();
         this.scheduleTitle = schedule.getScheduleTitle();
         this.scheduleContent = schedule.getScheduleContent();
-        this.scheduleManager = schedule.getScheduleManager();
+        this.scheduleManager = schedule.getUser().getEmail();
         this.scheduleDatetime = schedule.getScheduleDatetime();
     }
 }

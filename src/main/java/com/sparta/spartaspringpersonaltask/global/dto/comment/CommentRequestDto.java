@@ -8,8 +8,4 @@ public class CommentRequestDto {
 
     @NotBlank(message = "댓글 내용을 필수 입력 값입니다")
     private String commentContent;
-
-    @NotBlank(message = "댓글 작성자는 필수 입력 값입니다")
-    private String userName;
-
 }

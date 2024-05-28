@@ -4,7 +4,8 @@ import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.comment.repository.CommentRepository;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
-import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentDeleteRequestDto;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
+import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
@@ -16,27 +17,35 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
-    public CommentService(CommentRepository commentRepository, ScheduleRepository scheduleRepository) {
+    public CommentService(CommentRepository commentRepository,
+                          ScheduleRepository scheduleRepository,
+                          UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
     /**
      * 댓글 등록 기능
-     * @param scheduleKey 댓글을 작성할 스케줄의 고유번호
-     * @param requestDto 댓글내용, 사용자이름
-     * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      *
+     * @param scheduleKey 댓글을 작성할 스케줄의 고유번호
+     * @param requestDto  댓글내용
+     * @param userName 유저 ID
+     * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      */
-    public CommentResponseDto createComment(Long scheduleKey, CommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long scheduleKey, CommentRequestDto requestDto, String userName) {
         Schedule schedule = scheduleRepository.findById(scheduleKey).orElseThrow(
                 () -> new NotFoundException("선택한 일정이 없습니다.")
         );
-
         schedule.checkDeletionStatus();
 
-        Comment comment = toEntity(schedule, requestDto);
+        User user = userRepository.findByUserName(userName).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
+        );
+
+        Comment comment = toEntity(schedule, user, requestDto);
 
         commentRepository.save(comment);
 
@@ -45,20 +54,23 @@ public class CommentService {
 
     /**
      * 댓글 수정 기능
+     *
      * @param commentKey 댓글 고유번호
-     * @param requestDto 댓글내용, 사용자이름
+     * @param requestDto 댓글내용
+     * @param userName 유저 ID
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 수정된 댓글내용, 댓글작성시간
      */
     @Transactional
-    public CommentResponseDto updateComment(Long commentKey, CommentRequestDto requestDto) {
-        Comment comment = findComment(commentKey);
-        Comment commentToUpdate = toEntity(comment.getSchedule(), requestDto);
+    public CommentResponseDto updateComment(Long commentKey, CommentRequestDto requestDto, String userName) {
+        Comment comment = retrieveComment(commentKey);
 
-        comment.getSchedule().checkDeletionStatus();
+        User user =  userRepository.findByUserName(userName).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
+        );
 
-        comment.checkDeletionStatus();
+        Comment commentToUpdate = toEntity(comment.getSchedule(), user,requestDto);
 
-        comment.checkUserName(commentToUpdate.getCommentUserName());
+        comment.checkUser(user);
 
         comment.update(commentToUpdate);
 
@@ -68,17 +80,18 @@ public class CommentService {
     /**
      * 댓글 삭제 기능
      * @param commentKey 댓글 고유번호
-     * @param requestDto 사용자 이름
+     * @param userName 유저 ID
      * @return 댓글 삭제 메세지
      */
     @Transactional
-    public String deleteComment(Long commentKey, CommentDeleteRequestDto requestDto) {
-        Comment comment = findComment(commentKey);
-        String inputUserName = requestDto.getUserName();
+    public String deleteComment(Long commentKey, String userName) {
+        Comment comment = retrieveComment(commentKey);
 
-        comment.checkDeletionStatus();
+        User user =  userRepository.findByUserName(userName).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
+        );
 
-        comment.checkUserName(inputUserName);
+        comment.checkUser(user);
 
         comment.deletedTime();
 
@@ -86,14 +99,18 @@ public class CommentService {
     }
 
     /**
-     * DB 에서 댓글을 찾아 반환
+     * 댓글 유효성 확인
      * @param commentId 댓글 고유번호
-     * @return 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
+     * @return 댓글고유번호, 스케줄, 유저정보, 댓글내용, 댓글작성시간
      */
-    private Comment findComment(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(
+    private Comment retrieveComment(Long commentId) {
+        Comment comment=  commentRepository.findById(commentId).orElseThrow(
                 () -> new NotFoundException("선택한 댓글이 없습니다.")
         );
+
+        comment.checkDeletionStatus();
+
+        return comment;
     }
 
     /**
@@ -102,11 +119,11 @@ public class CommentService {
      * @param requestDto 댓글내용, 사용자이름
      * @return 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
      */
-    private Comment toEntity(Schedule schedule, CommentRequestDto requestDto) {
+    private Comment toEntity(Schedule schedule, User user, CommentRequestDto requestDto) {
         return Comment.builder()
                 .schedule(schedule)
+                .user(user)
                 .commentContent(requestDto.getCommentContent())
-                .commentUserName(requestDto.getUserName())
                 .build();
     }
 

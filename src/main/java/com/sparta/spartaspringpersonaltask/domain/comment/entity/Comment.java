@@ -1,6 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.comment.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
@@ -25,8 +27,9 @@ public class Comment {
     @JoinColumn(name = "schedule_key")
     private Schedule schedule;
 
-    @Column(nullable = false)
-    private String commentUserName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private String commentContent;
@@ -37,9 +40,9 @@ public class Comment {
     private LocalDateTime commentDeletionStatus;
 
     @Builder
-    public Comment(Schedule schedule, String commentUserName, String commentContent) {
+    public Comment(Schedule schedule, User user, String commentContent) {
         this.schedule = schedule;
-        this.commentUserName = commentUserName;
+        this.user = user;
         this.commentContent = commentContent;
         this.commentDatetime = LocalDateTime.now();
         this.commentDeletionStatus = null;
@@ -50,9 +53,13 @@ public class Comment {
         this.commentDatetime = LocalDateTime.now();
     }
 
-    public void checkUserName(String commentUserName) {
-        if (!Objects.equals(this.commentUserName, commentUserName)) {
-            throw new InvalidException("사용자 이름이 일치하지 않습니다.");
+    public void checkUser(User user) {
+        if (user.getRole() == UserRoleEnum.ADMIN) {
+            return;
+        }
+
+        if (!Objects.equals(this.user.getUserName(), user.getUserName())) {
+            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
         }
     }
 

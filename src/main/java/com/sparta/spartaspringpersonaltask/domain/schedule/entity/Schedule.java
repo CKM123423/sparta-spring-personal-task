@@ -1,6 +1,8 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
@@ -26,11 +28,9 @@ public class Schedule {
 
     private String scheduleContent;
 
-    @Column(nullable = false)
-    private String scheduleManager;
-
-    @Column(nullable = false)
-    private String schedulePassword;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime scheduleDatetime;
@@ -41,11 +41,10 @@ public class Schedule {
     private List<Comment> commentList;
 
     @Builder
-    public Schedule(String scheduleTitle, String scheduleContent, String scheduleManager, String schedulePassword) {
+    public Schedule(User user, String scheduleTitle, String scheduleContent) {
+        this.user = user;
         this.scheduleTitle = scheduleTitle;
         this.scheduleContent = scheduleContent;
-        this.scheduleManager = scheduleManager;
-        this.schedulePassword = schedulePassword;
         this.scheduleDatetime = LocalDateTime.now();
         this.deletionStatus = null;
     }
@@ -53,7 +52,6 @@ public class Schedule {
     public void update(Schedule schedule) {
         this.scheduleTitle = schedule.getScheduleTitle();
         this.scheduleContent = schedule.getScheduleContent();
-        this.scheduleManager = schedule.getScheduleManager();
         this.scheduleDatetime = LocalDateTime.now();
     }
 
@@ -61,9 +59,13 @@ public class Schedule {
         this.deletionStatus = LocalDateTime.now();
     }
 
-    public void checkPassword(String password) {
-        if (!Objects.equals(this.schedulePassword, password)) {
-            throw new InvalidException("비밀번호가 일치하지 않습니다.");
+    public void checkUser(User user) {
+        if (user.getRole() == UserRoleEnum.ADMIN) {
+            return;
+        }
+
+        if (!Objects.equals(this.user.getUserName(), user.getUserName())) {
+            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
         }
     }
 
