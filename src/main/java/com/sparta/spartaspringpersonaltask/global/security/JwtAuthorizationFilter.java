@@ -1,5 +1,6 @@
 package com.sparta.spartaspringpersonaltask.global.security;
 
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.utils.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -29,24 +30,33 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String accessToken = jwtUtil.getJwtFromHeader(request, JwtUtil.AUTHORIZATION_HEADER);
 
-        String tokenValue = jwtUtil.getJwtFromHeader(request);
+        if (StringUtils.hasText(accessToken)) {
+            if (!jwtUtil.validateToken(accessToken, JwtUtil.AUTHORIZATION_HEADER)) {
+                String refreshToken = jwtUtil.getJwtFromHeader(request, JwtUtil.REFRESH_HEADER);
 
-        if (StringUtils.hasText(tokenValue)) {
+                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken, JwtUtil.REFRESH_HEADER)) {
+                    Claims refreshClaims = jwtUtil.getUserInfoFromToken(refreshToken);
+                    String username = refreshClaims.getSubject();
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("토큰 에러");
-                return;
-            }
+                    // 유저 정보를 통해 권한 확인
+                    UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(username);
+                    UserRoleEnum role = userDetails.getUser().getRole();
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-            try {
-                setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return;
+                    String newAccessToken = jwtUtil.createToken(username, role);
+                    response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+                    setAuthentication(username);
+                } else {
+                    log.error("리프레시 토큰이 유효하지 않거나 만료되었습니다.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+            } else {
+                Claims claims = jwtUtil.getUserInfoFromToken(accessToken);
+                setAuthentication(claims.getSubject());
             }
         }
 
