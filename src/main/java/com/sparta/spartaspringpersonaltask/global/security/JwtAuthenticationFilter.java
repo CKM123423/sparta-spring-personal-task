@@ -3,7 +3,7 @@ package com.sparta.spartaspringpersonaltask.global.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.dto.user.LoginRequestDto;
-import com.sparta.spartaspringpersonaltask.global.utils.jwt.JwtUtil;
+import com.sparta.spartaspringpersonaltask.global.jwt.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,10 +17,10 @@ import java.io.IOException;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -49,11 +49,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-        String accessToken = jwtUtil.createToken(username, role);
-        String refreshToken = jwtUtil.createRefreshToken(username);
+        String accessToken = jwtProvider.createAccessToken(username, role);
+        String refreshToken = jwtProvider.createRefreshToken(username);
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-        response.addHeader(JwtUtil.REFRESH_HEADER, refreshToken);
+        response.addHeader(JwtProvider.AUTHORIZATION_HEADER, accessToken);
+        response.addHeader(JwtProvider.REFRESH_HEADER, refreshToken);
 
         // 로그인 성공 메시지를 응답 바디에 추가
         String successMessage = "로그인에 성공했습니다.";

@@ -27,6 +27,8 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
+    // 유저서비스내에 스케줄이있고
+    // 스케줄내에 유저서비스
     /**
      * 댓글 등록 기능
      *

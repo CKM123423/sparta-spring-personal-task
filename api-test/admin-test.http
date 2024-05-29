@@ -1,0 +1,39 @@
+## Variables
+@admin_userNickname = Nickname
+@admin_userName = admin1
+@admin_password = AbCd1234
+@admin_email = admin@email.com
+
+### 관리자 회원 가입
+POST http://localhost:8080/api/user/signup
+Content-Type: application/json
+
+{
+  "userNickname":"{{admin_userNickname}}",
+  "userName":"{{admin_userName}}",
+  "userPassword":"{{admin_password}}",
+  "email":"{{admin_email}}",
+  "admin":true,
+  "adminToken": "{{adminCode}}"
+}
+
+### 관리자 로그인
+POST http://localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "username": "{{admin_userName}}",
+  "password": "{{admin_password}}"
+}
+
+> {% client.global.set("accessToken", response.headers.valueOf("Authorization")); %}
+
+### 관리자 일정 등록
+POST http://localhost:8080/api/schedule/create
+Authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "scheduleTitle":"일정제목",
+  "scheduleContent":"일정내용"
+}

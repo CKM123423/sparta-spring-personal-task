@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.global.utils.jwt;
+package com.sparta.spartaspringpersonaltask.global.jwt;
 
 import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
@@ -14,9 +14,9 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
-@Slf4j(topic = "JwtUtil")
+@Slf4j(topic = "JwtProvider")
 @Component
-public class JwtUtil {
+public class JwtProvider {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_HEADER = "Refresh-Token";
@@ -27,7 +27,7 @@ public class JwtUtil {
     // 토큰 만료시간
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
     // 리플레쉬 토큰 만료시간
-    private final long REFRESH_TOKEN_EXPIRATION_TIME = 14 * 24 * 60 * 60 * 1000L; // 14일
+    private final long REFRESH_TOKEN_EXPIRATION_TIME = 24 * 60 * 60 * 1000L; // 1일
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -41,7 +41,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
+    public String createAccessToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +

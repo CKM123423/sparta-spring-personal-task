@@ -5,6 +5,7 @@ import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
 import com.sparta.spartaspringpersonaltask.global.dto.user.SignupRequestDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.DuplicateException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,12 @@ public class UserService {
         userRepository.save(user);
 
         return role + "권한으로 회원가입에 성공 하였습니다.";
+    }
+
+    private User findUser(String userName) {
+        return userRepository.findByUserName(userName).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
+        );
     }
 
     private User toEntity(SignupRequestDto requestDto, UserRoleEnum role) {

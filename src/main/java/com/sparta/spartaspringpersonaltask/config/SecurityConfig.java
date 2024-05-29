@@ -3,11 +3,12 @@ package com.sparta.spartaspringpersonaltask.config;
 import com.sparta.spartaspringpersonaltask.global.security.JwtAuthenticationFilter;
 import com.sparta.spartaspringpersonaltask.global.security.JwtAuthorizationFilter;
 import com.sparta.spartaspringpersonaltask.global.security.UserDetailsServiceImpl;
-import com.sparta.spartaspringpersonaltask.global.utils.jwt.JwtUtil;
+import com.sparta.spartaspringpersonaltask.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
@@ -39,14 +40,14 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtProvider, userDetailsService);
     }
 
     @Bean
@@ -63,6 +64,8 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/schedule/*").permitAll() // 단일 일정 조회 허용
+                        .requestMatchers("/api/schedules").permitAll() // 전체 일정 조회 허용
                         .anyRequest().authenticated()
         );
 
