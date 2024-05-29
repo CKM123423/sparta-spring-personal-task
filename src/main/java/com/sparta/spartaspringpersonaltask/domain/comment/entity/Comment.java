@@ -53,21 +53,7 @@ public class Comment {
         this.commentDatetime = LocalDateTime.now();
     }
 
-    public void checkUser(User user) {
-        if (user.getRole() == UserRoleEnum.ADMIN) {
-            return;
-        }
-
-        if (!Objects.equals(this.user.getUserName(), user.getUserName())) {
-            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
-        }
-    }
-
     public void checkDeletionStatus() {
-        if (this.schedule.getDeletionStatus() != null){
-            throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
-        }
-
         if (this.commentDeletionStatus != null) {
             throw new AlreadyDeletedException("이미 삭제된 댓글입니다.");
         }

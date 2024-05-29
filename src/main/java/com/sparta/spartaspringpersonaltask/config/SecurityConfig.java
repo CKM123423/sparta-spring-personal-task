@@ -1,9 +1,8 @@
 package com.sparta.spartaspringpersonaltask.config;
 
+import com.sparta.spartaspringpersonaltask.global.jwt.JwtProvider;
 import com.sparta.spartaspringpersonaltask.global.security.JwtAuthenticationFilter;
 import com.sparta.spartaspringpersonaltask.global.security.JwtAuthorizationFilter;
-import com.sparta.spartaspringpersonaltask.global.security.UserDetailsServiceImpl;
-import com.sparta.spartaspringpersonaltask.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean

@@ -2,6 +2,7 @@ package com.sparta.spartaspringpersonaltask.domain.user.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -53,5 +55,15 @@ public class User {
         this.email = email;
         this.role = role;
         this.userCreatedDate = LocalDateTime.now();
+    }
+
+    public boolean isAdmin() {
+        return role.equals(UserRoleEnum.ADMIN);
+    }
+
+    public void checkUser(User user) {
+        if (!Objects.equals(this.getUserName(), user.getUserName())) {
+            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
+        }
     }
 }

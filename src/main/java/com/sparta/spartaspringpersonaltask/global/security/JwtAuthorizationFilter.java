@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,9 +23,9 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    public JwtAuthorizationFilter(JwtProvider jwtProvider, UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthorizationFilter(JwtProvider jwtProvider, UserDetailsService userDetailsService) {
         this.jwtProvider = jwtProvider;
         this.userDetailsService = userDetailsService;
     }
@@ -50,7 +51,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     String username = refreshClaims.getSubject();
 
                     // 유저 정보를 통해 권한 확인
-                    UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(username);
+                    UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
                     UserRoleEnum role = userDetails.getUser().getRole();
 
                     // 토큰 재 발행

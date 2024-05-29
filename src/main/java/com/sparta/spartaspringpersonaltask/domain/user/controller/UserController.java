@@ -1,7 +1,7 @@
 package com.sparta.spartaspringpersonaltask.domain.user.controller;
 
 import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
-import com.sparta.spartaspringpersonaltask.domain.user.service.UserService;
+import com.sparta.spartaspringpersonaltask.domain.user.service.UserServiceImpl;
 import com.sparta.spartaspringpersonaltask.global.dto.user.SignupRequestDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.validation.Valid;
@@ -18,10 +18,10 @@ public class UserController {
     @Value("${admin.token}")
     private String ADMIN_TOKEN;
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
     /**
@@ -38,6 +38,6 @@ public class UserController {
             }
             role = UserRoleEnum.ADMIN;
         }
-        return userService.signup(requestDto, role);
+        return userServiceImpl.signup(requestDto, role);
     }
 }

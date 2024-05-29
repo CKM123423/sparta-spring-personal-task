@@ -3,6 +3,7 @@ package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
+import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
@@ -59,15 +60,14 @@ public class Schedule {
         this.deletionStatus = LocalDateTime.now();
     }
 
-    public void checkUser(User user) {
-        if (user.getRole() == UserRoleEnum.ADMIN) {
-            return;
-        }
-
-        if (!Objects.equals(this.user.getUserName(), user.getUserName())) {
-            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
+    public void deleteComment() {
+        for (Comment comment : commentList) {
+            if (comment.getCommentDeletionStatus() == null){
+                comment.deletedTime();
+            }
         }
     }
+
 
     public void checkDeletionStatus() {
         if (this.deletionStatus != null) {

@@ -1,5 +1,7 @@
 package com.sparta.spartaspringpersonaltask.global.dto.user;
 
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,4 +30,14 @@ public class SignupRequestDto {
     private String email;
     private boolean admin = false;
     private String adminToken = "";
+
+    public User toEntity(String encodedPassword, UserRoleEnum role) {
+        return User.builder()
+                .userNickname(this.getUserNickname())
+                .userName(this.getUserName())
+                .userPassword(encodedPassword)
+                .email(this.getEmail())
+                .role(role)
+                .build();
+    }
 }
