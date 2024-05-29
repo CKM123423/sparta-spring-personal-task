@@ -1,4 +1,4 @@
-package com.sparta.spartaspringpersonaltask.global.security;
+package com.sparta.spartaspringpersonaltask.global.auth.security;
 
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;

@@ -3,7 +3,7 @@ package com.sparta.spartaspringpersonaltask.domain.comment.controller;
 import com.sparta.spartaspringpersonaltask.domain.comment.service.CommentService;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
-import com.sparta.spartaspringpersonaltask.global.security.UserDetailsImpl;
+import com.sparta.spartaspringpersonaltask.global.auth.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -3,9 +3,9 @@ package com.sparta.spartaspringpersonaltask.domain.comment.service;
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.comment.repository.CommentRepository;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
+import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleService;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
-import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
+import com.sparta.spartaspringpersonaltask.domain.user.service.UserService;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
@@ -16,15 +16,15 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final ScheduleRepository scheduleRepository;
-    private final UserRepository userRepository;
+    private final ScheduleService scheduleService;
+    private final UserService userService;
 
     public CommentService(CommentRepository commentRepository,
-                          ScheduleRepository scheduleRepository,
-                          UserRepository userRepository) {
+                          ScheduleService scheduleService,
+                          UserService userService) {
         this.commentRepository = commentRepository;
-        this.scheduleRepository = scheduleRepository;
-        this.userRepository = userRepository;
+        this.scheduleService = scheduleService;
+        this.userService = userService;
     }
 
     // 유저서비스내에 스케줄이있고
@@ -37,21 +37,17 @@ public class CommentService {
      * @param userName 유저 ID
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      */
+    @Transactional
     public CommentResponseDto createComment(Long scheduleKey, CommentRequestDto requestDto, String userName) {
-        Schedule schedule = scheduleRepository.findById(scheduleKey).orElseThrow(
-                () -> new NotFoundException("선택한 일정이 없습니다.")
-        );
-        schedule.checkDeletionStatus();
+        Schedule schedule = scheduleService.retrieveSchedule(scheduleKey);
 
-        User user = userRepository.findByUserName(userName).orElseThrow(
-                () -> new NotFoundException("해당하는 유저가 없습니다.")
-        );
+        User user = userService.getUserByUsername(userName);
 
-        Comment comment = toEntity(schedule, user, requestDto);
+        Comment comment = requestDto.toEntity(schedule, user);
 
         commentRepository.save(comment);
 
-        return toDto(comment);
+        return new CommentResponseDto(comment);
     }
 
     /**
@@ -66,17 +62,14 @@ public class CommentService {
     public CommentResponseDto updateComment(Long commentKey, CommentRequestDto requestDto, String userName) {
         Comment comment = retrieveComment(commentKey);
 
-        User user =  userRepository.findByUserName(userName).orElseThrow(
-                () -> new NotFoundException("해당하는 유저가 없습니다.")
-        );
+        User user =  userService.getUserByUsername(userName);
+        userService.validateUserPermission(user, comment);
 
-        Comment commentToUpdate = toEntity(comment.getSchedule(), user,requestDto);
-
-        comment.checkUser(user);
+        Comment commentToUpdate = requestDto.toEntity(comment.getSchedule(), user);
 
         comment.update(commentToUpdate);
 
-        return toDto(comment);
+        return new CommentResponseDto(comment);
     }
 
     /**
@@ -89,11 +82,8 @@ public class CommentService {
     public String deleteComment(Long commentKey, String userName) {
         Comment comment = retrieveComment(commentKey);
 
-        User user =  userRepository.findByUserName(userName).orElseThrow(
-                () -> new NotFoundException("해당하는 유저가 없습니다.")
-        );
-
-        comment.checkUser(user);
+        User user =  userService.getUserByUsername(userName);
+        userService.validateUserPermission(user, comment);
 
         comment.deletedTime();
 
@@ -110,31 +100,10 @@ public class CommentService {
                 () -> new NotFoundException("선택한 댓글이 없습니다.")
         );
 
+        comment.getSchedule().checkDeletionStatus();
+
         comment.checkDeletionStatus();
 
         return comment;
-    }
-
-    /**
-     *  dto -> entity
-     * @param schedule 스케줄 entity
-     * @param requestDto 댓글내용, 사용자이름
-     * @return 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
-     */
-    private Comment toEntity(Schedule schedule, User user, CommentRequestDto requestDto) {
-        return Comment.builder()
-                .schedule(schedule)
-                .user(user)
-                .commentContent(requestDto.getCommentContent())
-                .build();
-    }
-
-    /**
-     * entity -> dto
-     * @param comment 댓글고유번호, 스케줄, 댓글작성자, 댓글내용, 댓글작성시간
-     * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
-     */
-    private CommentResponseDto toDto(Comment comment) {
-        return new CommentResponseDto(comment);
     }
 }

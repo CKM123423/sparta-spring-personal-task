@@ -1,5 +1,7 @@
 package com.sparta.spartaspringpersonaltask.global.dto.schedule;
 
+import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,4 +13,12 @@ public class ScheduleRequestDto {
     private String scheduleTitle;
 
     private String scheduleContent;
+
+    public Schedule toEntity(User user) {
+        return Schedule.builder()
+                .user(user)
+                .scheduleTitle(this.getScheduleTitle())
+                .scheduleContent(this.getScheduleContent())
+                .build();
+    }
 }

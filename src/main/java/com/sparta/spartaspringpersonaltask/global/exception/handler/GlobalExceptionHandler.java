@@ -4,7 +4,10 @@ import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.Alr
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.DuplicateException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +55,28 @@ public class GlobalExceptionHandler {
     // 중복된 정보일 때
     @ExceptionHandler(DuplicateException.class)
     public ResponseEntity<Object> handleDuplicateException(DuplicateException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    // 지원되지 않는 작업일 때
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<Object> handleUnsupportedOperationException(UnsupportedOperationException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    // Security 와 관련된 AuthenticationException 예외 처리
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+        HttpStatus statusCode = e instanceof BadCredentialsException
+                ? HttpStatus.FORBIDDEN
+                : HttpStatus.UNAUTHORIZED;
+
+        return ResponseEntity.status(statusCode).body(e.getMessage());
+    }
+
+    // 그외의 익셉션
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
