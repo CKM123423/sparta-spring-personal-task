@@ -1,7 +1,5 @@
 package com.sparta.spartaspringpersonaltask.config;
 
-import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
-import com.sparta.spartaspringpersonaltask.global.auth.jwt.JwtProvider;
 import com.sparta.spartaspringpersonaltask.global.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -31,11 +29,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // CSRF 설정
+
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
 
-        // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
+        // 기본 설정인 세션 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
@@ -43,7 +41,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll() // 회원가입, 로그인 허용
                         .requestMatchers("/api/schedules").permitAll() // 전체 일정 조회 허용
                         .requestMatchers(HttpMethod.GET, "/api/schedule/*").permitAll() // 단일 일정 조회 허용
                         .anyRequest().authenticated()

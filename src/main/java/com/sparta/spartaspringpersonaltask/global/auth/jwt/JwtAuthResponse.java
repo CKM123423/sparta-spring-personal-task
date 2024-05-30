@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
+// 토큰 테스트용으로 작성해놨었음
 public class JwtAuthResponse {
     private String accessToken;
     private String refreshToken;

@@ -29,7 +29,7 @@ public class SignupRequestDto {
     @Email(message = "유효한 이메일 형식이어야 합니다")
     private String email;
     private boolean admin = false;
-    private String adminToken = "";
+    private String adminCode = "";
 
     public User toEntity(String encodedPassword, UserRoleEnum role) {
         return User.builder()

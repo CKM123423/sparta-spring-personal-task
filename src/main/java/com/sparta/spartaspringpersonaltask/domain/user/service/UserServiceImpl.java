@@ -17,6 +17,12 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    /**
+     * 유저 ID 로 유저객체를 찾아서 전달
+     *
+     * @param username 유저 ID
+     * @return 유저 객체
+     */
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByUserName(username).orElseThrow(
@@ -24,6 +30,13 @@ public class UserServiceImpl implements UserService{
         );
     }
 
+    /**
+     * 유저의 권한 확인 로직
+     *
+     * @param user 변경이나 삭제의 대상이 대는 객체
+     * @param entity 요청이 들어온 사용자의 정보가 담긴 객체
+     * @param <T> 비교할 객체의 타입
+     */
     @Override
     public <T> void validateUserPermission(User user, T entity) {
         if (!user.isAdmin()) {

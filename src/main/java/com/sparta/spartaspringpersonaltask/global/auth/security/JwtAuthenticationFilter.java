@@ -29,11 +29,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
+
         // 헤더에서 토큰 가져오기
         String token = jwtProvider.getJwtFromHeader(request);
+
+        // 토큰 유효성 확인
         if (StringUtils.hasText(token) && jwtProvider.validateToken(token)) {
+
             String username = jwtProvider.getUsername(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            // 자격 증명
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

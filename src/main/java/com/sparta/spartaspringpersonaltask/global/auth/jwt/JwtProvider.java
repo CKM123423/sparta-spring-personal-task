@@ -39,6 +39,7 @@ public class JwtProvider {
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
+
     }
 
     // 토큰 생성

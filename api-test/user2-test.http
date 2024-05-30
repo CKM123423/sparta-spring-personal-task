@@ -1,10 +1,10 @@
 ## Variables
 @userNickname = Nickname
-@userName = admin1
+@userName = user2
 @password = AbCd1234
-@email = admin@email.com
+@email = user2@email.com
 
-### 관리자 회원 가입
+### 유저 회원 가입
 POST http://localhost:8080/api/auth/sign-up
 Content-Type: application/json
 
@@ -12,12 +12,10 @@ Content-Type: application/json
   "userNickname":"{{userNickname}}",
   "userName":"{{userName}}",
   "userPassword":"{{password}}",
-  "email":"{{email}}",
-  "admin":true,
-  "adminCode": "{{adminCode}}"
+  "email":"{{email}}"
 }
 
-### 관리자 로그인
+### 유저 로그인
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
@@ -27,7 +25,6 @@ Content-Type: application/json
 }
 
 > {% client.global.set("Access-Token", response.headers.valueOf("Access-Token")); %}
-
 
 ### 리플레시 토큰 테스트
 POST http://localhost:8080/api/auth/token/refresh

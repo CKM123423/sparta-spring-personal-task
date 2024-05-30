@@ -57,7 +57,7 @@ public class Schedule {
     }
 
     public void deleteComment() {
-        for (Comment comment : commentList) {
+        for (Comment comment : this.commentList) {
             if (comment.getCommentDeletionStatus() == null){
                 comment.deletedTime();
             }

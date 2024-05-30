@@ -9,8 +9,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+/**
+ * AuthenticationEntryPoint 는 Spring Security 에서 예외가 발생시 반환되는 익셉션을 감지하여 후처리를 수행
+ *
+ */
 @Component
-public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
