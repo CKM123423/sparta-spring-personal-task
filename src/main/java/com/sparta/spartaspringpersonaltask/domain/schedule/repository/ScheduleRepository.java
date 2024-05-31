@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    Schedule findByScheduleIdAndScheduleDeleteAtIsNull(Long scheduleId);
+    Optional<Schedule> findByScheduleIdAndScheduleDeleteAtIsNull(Long scheduleId);
 
-    List<Schedule> findAllAndDeletedAtIsNullByOrderByCreatedAtDesc();
+    List<Schedule> findAllByScheduleDeleteAtIsNullOrderByCreatedAtDesc();
 }

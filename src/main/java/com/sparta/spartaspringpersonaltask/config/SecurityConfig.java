@@ -41,8 +41,8 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/auth/**").permitAll() // 회원가입, 로그인 허용
-                        .requestMatchers("/api/schedules").permitAll() // 전체 일정 조회 허용
-                        .requestMatchers(HttpMethod.GET, "/api/schedule/*").permitAll() // 단일 일정 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/api/schedules").permitAll() // 전체 일정 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/api/schedules/*").permitAll() // 단일 일정 조회 허용
                         .anyRequest().authenticated()
                 ).exceptionHandling(handler ->
                         handler.authenticationEntryPoint(authEntryPoint)

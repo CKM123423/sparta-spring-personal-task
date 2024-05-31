@@ -3,11 +3,9 @@ package com.sparta.spartaspringpersonaltask.domain.schedule.service;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
-import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
-import com.sparta.spartaspringpersonaltask.global.dto.user.UserRequestDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,7 @@ public class ScheduleService {
     // 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, String username) {
         // 사용자 정보 가져오기
-        User user = getUser(username);
+        User user = getUserByUsername(username);
 
         // DTO -> Entity
         Schedule schedule = requestDto.toEntity(user);
@@ -45,7 +43,7 @@ public class ScheduleService {
     // 단일 일정 조회
     public ScheduleResponseDto viewSelectedSchedule(Long scheduleId) {
         // 일정 유효성 확인 및 객체 생성
-        Schedule schedule = getSchedule(scheduleId);
+        Schedule schedule = getScheduleByScheduleId(scheduleId);
 
         // Entity -> DTO
         return new ScheduleResponseDto(schedule);
@@ -53,19 +51,22 @@ public class ScheduleService {
 
     // 전체 일정 조회
     public List<ScheduleResponseDto> viewAllSchedules() {
-        return scheduleRepository.findAllAndDeletedAtIsNullByOrderByCreatedAtDesc().stream()
+        return scheduleRepository.findAllByScheduleDeleteAtIsNullOrderByCreatedAtDesc().stream()
                 .map(ScheduleResponseDto::new)
                 .toList();
     }
 
     // 일정 수정
     @Transactional
-    public ScheduleResponseDto modifySchedule(Long scheduleId, ScheduleRequestDto requestDto, UserRequestDto userRequestDto) {
+    public ScheduleResponseDto modifySchedule(Long scheduleId, ScheduleRequestDto requestDto, String username) {
         // 일정 유효성 확인 및 객체 생성
-        Schedule schedule = getSchedule(scheduleId);
+        Schedule schedule = getScheduleByScheduleId(scheduleId);
+
+        // 로그인 유저 객체 생성
+        User user = getUserByUsername(username);
 
         // 사용자 권한체크
-        checkUserAuthority(userRequestDto, schedule);
+        user.checkAuthority(schedule.getUser().getUserId());
 
         // 수정 내용 저장
         schedule.update(requestDto.getScheduleTitle(), requestDto.getScheduleContent());
@@ -76,13 +77,16 @@ public class ScheduleService {
 
     // 일정 삭제 기능
     @Transactional
-    public String deleteSchedule(Long scheduleId, UserRequestDto userRequestDto) {
+    public String deleteSchedule(Long scheduleId, String username) {
         // 일정 존재 여부 확인 및 객체 생성
-        Schedule schedule = getSchedule(scheduleId);
+        Schedule schedule = getScheduleByScheduleId(scheduleId);
+
+        // 로그인 유저 객체 생성
+        User user = getUserByUsername(username);
 
         // 사용자 권한체크
-        checkUserAuthority(userRequestDto, schedule);
-
+        user.checkAuthority(schedule.getUser().getUserId());
+        
         // 일정에 연동된 댓글 삭제 (소프트 삭제)
         schedule.deleteComment();
 
@@ -93,16 +97,10 @@ public class ScheduleService {
         return scheduleId + "번 일정이 삭제 되었습니다.";
     }
 
-
-    /**
-     * 로그인해서 요청을한 유저의 권한 확인
-     * @param userRequestDto 로그인한 유저의 정보
-     * @param schedule 일정 객체
-     */
-    private void checkUserAuthority(UserRequestDto userRequestDto, Schedule schedule) {
-        if (userRequestDto.getRole() != UserRoleEnum.ADMIN) {
-            schedule.getUser().checkAuthority(userRequestDto.getUsername());
-        }
+    // 일정 찾고 유효성 확인
+    private Schedule getScheduleByScheduleId(Long scheduleId) {
+        return scheduleRepository.findByScheduleIdAndScheduleDeleteAtIsNull(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 일정은 없거나 삭제되었습니다."));
     }
 
     /**
@@ -110,18 +108,9 @@ public class ScheduleService {
      * @param username 유저이름 (유니크)
      * @return 유저 객체
      */
-    private User getUser(String username) {
-        return userRepository.findByUsername(username).orElseThrow(
-                () -> new NotFoundException("해당하는 유저가 없습니다.")
-        );
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("해당하는 유저가 없습니다."));
     }
 
-    // 일정 찾고 유효성 확인
-    private Schedule getSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleDeleteAtIsNull(scheduleId);
-        if (schedule == null) {
-            throw new IllegalArgumentException("해당하는 일정은 없거나 삭제되었습니다.");
-        }
-        return schedule;
-    }
 }

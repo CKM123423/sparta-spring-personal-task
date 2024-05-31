@@ -35,7 +35,7 @@ Refresh-Token:{{Refresh-Token}}
 
 
 ### 일정 등록
-POST http://localhost:8080/api/schedule/create
+POST http://localhost:8080/api/schedules
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -45,17 +45,15 @@ Content-Type: application/json
 }
 
 ### 단일 일정 조회
-GET http://localhost:8080/api/schedule/4
-Access-Token:{{Access-Token}}
+GET http://localhost:8080/api/schedules/3
 
 
 ### 전체 일정 조회
 GET http://localhost:8080/api/schedules
-Access-Token:{{Access-Token}}
 
 
 ### 일정 수정
-PUT http://localhost:8080/api/schedule/3
+PUT http://localhost:8080/api/schedules/12
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -65,11 +63,11 @@ Content-Type: application/json
 }
 
 ### 일정 삭제
-DELETE http://localhost:8080/api/schedule/5
+DELETE http://localhost:8080/api/schedules/1
 Access-Token:{{Access-Token}}
 
 ### 댓글 등록
-POST http://localhost:8080/api/comment/create/3
+POST http://localhost:8080/api/comments/1
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -78,7 +76,7 @@ Content-Type: application/json
 }
 
 ### 댓글 수정
-PUT http://localhost:8080/api/comment/update/2
+PUT http://localhost:8080/api/comments/1
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -87,5 +85,5 @@ Content-Type: application/json
 }
 
 ### 댓글 삭제
-DELETE http://localhost:8080/api/comment/1
+DELETE http://localhost:8080/api/comments/1
 Access-Token:{{Access-Token}}
