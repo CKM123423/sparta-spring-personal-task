@@ -18,7 +18,7 @@ public class SignupRequestDto {
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*\\d).{4,10}$",
             message = "아이디는 최소 4자 이상, 10자 이하이며 알파벳 소문자와 숫자로 구성되어야 합니다.")
-    private String userName;
+    private String username;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,15}$",
@@ -34,7 +34,7 @@ public class SignupRequestDto {
     public User toEntity(String encodedPassword, UserRoleEnum role) {
         return User.builder()
                 .userNickname(this.getUserNickname())
-                .userName(this.getUserName())
+                .username(this.getUsername())
                 .userPassword(encodedPassword)
                 .email(this.getEmail())
                 .role(role)

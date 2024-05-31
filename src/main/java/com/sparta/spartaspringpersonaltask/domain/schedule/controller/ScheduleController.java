@@ -1,9 +1,10 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.controller;
 
-import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleServiceImpl;
+import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleService;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
 import com.sparta.spartaspringpersonaltask.global.auth.security.UserDetailsImpl;
+import com.sparta.spartaspringpersonaltask.global.dto.user.UserRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -14,50 +15,55 @@ import java.util.List;
 @RequestMapping("/api")
 public class ScheduleController {
 
-    private final ScheduleServiceImpl scheduleServiceImpl;
+    private final ScheduleService scheduleService;
 
-    public ScheduleController(ScheduleServiceImpl scheduleServiceImpl) {
-        this.scheduleServiceImpl = scheduleServiceImpl;
+    public ScheduleController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
     }
 
     // 일정 등록
     @PostMapping("/schedule/create")
     public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String userName = userDetails.getUser().getUserName();
+        String username = userDetails.getUser().getUsername();
 
-        return scheduleServiceImpl.createSchedule(requestDto, userName);
+        return scheduleService.createSchedule(requestDto, username);
     }
 
     // 단일 일정 조회
-    @GetMapping("/schedule/{scheduleKey}")
-    public ScheduleResponseDto viewSelectedSchedule(@PathVariable Long scheduleKey) {
-        return scheduleServiceImpl.viewSelectedSchedule(scheduleKey);
+    @GetMapping("/schedule/{scheduleId}")
+    public ScheduleResponseDto viewSelectedSchedule(@PathVariable Long scheduleId) {
+        return scheduleService.viewSelectedSchedule(scheduleId);
     }
 
     // 전체 일정 조회
     @GetMapping("schedules")
     public List<ScheduleResponseDto> viewAllSchedules() {
-        return scheduleServiceImpl.viewAllSchedules();
+        return scheduleService.viewAllSchedules();
     }
 
     // 선택한 일정 수정
-    @PutMapping("/schedule/{scheduleKey}")
-    public ScheduleResponseDto modifySchedule(@PathVariable Long scheduleKey,
+    @PutMapping("/schedule/{scheduleId}")
+    public ScheduleResponseDto modifySchedule(@PathVariable Long scheduleId,
                                               @Valid @RequestBody ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String userName = userDetails.getUser().getUserName();
-
-        return scheduleServiceImpl.modifySchedule(scheduleKey, requestDto, userName);
+        return scheduleService.modifySchedule(scheduleId, requestDto, userInfo(userDetails));
     }
 
     // 선택한 일정 삭제
-    @DeleteMapping("/schedule/{scheduleKey}")
-    public String deleteSchedule(@PathVariable Long scheduleKey,
+    @DeleteMapping("/schedule/{scheduleId}")
+    public String deleteSchedule(@PathVariable Long scheduleId,
                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String userName = userDetails.getUser().getUserName();
-
-        return scheduleServiceImpl.deleteSchedule(scheduleKey, userName);
+        return scheduleService.deleteSchedule(scheduleId, userInfo(userDetails));
     }
 
+    /**
+     * 유저의 권한을 확인하기 위한 정보전달 객체
+     *
+     * @param userDetails 유저의 정보
+     * @return 유저의 정보전달 객체
+     */
+    private UserRequestDto userInfo(UserDetailsImpl userDetails) {
+        return new UserRequestDto(userDetails.getUser().getUsername(), userDetails.getUser().getRole());
+    }
 }

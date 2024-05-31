@@ -45,7 +45,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-
     // 해당 정보를 찾을 수 없을때
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException e) {

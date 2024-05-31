@@ -8,18 +8,21 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentResponseDto {
 
-    private Long commentKey;
+    private Long commentId;
     private Long scheduleId;
-    private String commentUserName;
+    private String commentUsername;
     private String commentContent;
-    private LocalDateTime commentDatetime;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+
 
     public CommentResponseDto(Comment comment) {
-        this.commentKey = comment.getCommentKey();
-        this.scheduleId = comment.getSchedule().getScheduleKey();
-        this.commentUserName = comment.getUser().getUserNickname();
+        this.commentId = comment.getCommentId();
+        this.scheduleId = comment.getSchedule().getScheduleId();
+        this.commentUsername = comment.getUser().getUserNickname();
         this.commentContent = comment.getCommentContent();
-        this.commentDatetime = comment.getCommentDatetime();
+        this.createdAt = comment.getCreatedAt();
+        this.modifiedAt = comment.getModifiedAt();
     }
 }
 

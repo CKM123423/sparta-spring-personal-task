@@ -2,7 +2,7 @@ package com.sparta.spartaspringpersonaltask.domain.schedule.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
-import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +15,10 @@ import java.util.List;
 @Getter
 @Table(name = "schedules")
 @NoArgsConstructor
-public class Schedule {
+public class Schedule extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long scheduleKey;
+    private Long scheduleId;
 
     @Column(nullable = false, length = 200)
     private String scheduleTitle;
@@ -29,10 +29,7 @@ public class Schedule {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private LocalDateTime scheduleDatetime;
-
-    private LocalDateTime deletionStatus;
+    private LocalDateTime scheduleDeleteAt;
 
     @OneToMany(mappedBy = "schedule")
     private List<Comment> commentList;
@@ -42,32 +39,23 @@ public class Schedule {
         this.user = user;
         this.scheduleTitle = scheduleTitle;
         this.scheduleContent = scheduleContent;
-        this.scheduleDatetime = LocalDateTime.now();
-        this.deletionStatus = null;
+        this.scheduleDeleteAt = null;
     }
 
-    public void update(Schedule schedule) {
-        this.scheduleTitle = schedule.getScheduleTitle();
-        this.scheduleContent = schedule.getScheduleContent();
-        this.scheduleDatetime = LocalDateTime.now();
+    public void update(String scheduleTitle, String scheduleContent) {
+        this.scheduleTitle = scheduleTitle;
+        this.scheduleContent = scheduleContent;
     }
 
     public void deletedTime() {
-        this.deletionStatus = LocalDateTime.now();
+        this.scheduleDeleteAt = LocalDateTime.now();
     }
 
     public void deleteComment() {
         for (Comment comment : this.commentList) {
-            if (comment.getCommentDeletionStatus() == null){
+            if (comment.getCommentDeleteAt() == null){
                 comment.deletedTime();
             }
-        }
-    }
-
-
-    public void checkDeletionStatus() {
-        if (this.deletionStatus != null) {
-            throw new AlreadyDeletedException("이미 삭제된 일정입니다.");
         }
     }
 }

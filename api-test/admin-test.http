@@ -1,6 +1,6 @@
 ## Variables
 @userNickname = Nickname
-@userName = admin1
+@username = admin1
 @password = AbCd1234
 @email = admin@email.com
 
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
   "userNickname":"{{userNickname}}",
-  "userName":"{{userName}}",
+  "username":"{{username}}",
   "userPassword":"{{password}}",
   "email":"{{email}}",
   "admin":true,
@@ -22,14 +22,14 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "{{userName}}",
+  "username": "{{username}}",
   "password": "{{password}}"
 }
 
 > {% client.global.set("Access-Token", response.headers.valueOf("Access-Token")); %}
 
 
-### 리플레시 토큰 테스트
+### 리플레시 토큰 테스트 (포스트맨에서는 정상작동)
 POST http://localhost:8080/api/auth/token/refresh
 Refresh-Token:{{Refresh-Token}}
 
@@ -45,7 +45,7 @@ Content-Type: application/json
 }
 
 ### 단일 일정 조회
-GET http://localhost:8080/api/schedule/1
+GET http://localhost:8080/api/schedule/4
 Access-Token:{{Access-Token}}
 
 
@@ -55,7 +55,7 @@ Access-Token:{{Access-Token}}
 
 
 ### 일정 수정
-PUT http://localhost:8080/api/schedule/1
+PUT http://localhost:8080/api/schedule/3
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -65,11 +65,11 @@ Content-Type: application/json
 }
 
 ### 일정 삭제
-DELETE http://localhost:8080/api/schedule/1
+DELETE http://localhost:8080/api/schedule/5
 Access-Token:{{Access-Token}}
 
 ### 댓글 등록
-POST http://localhost:8080/api/comment/create/1
+POST http://localhost:8080/api/comment/create/3
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 
@@ -78,7 +78,7 @@ Content-Type: application/json
 }
 
 ### 댓글 수정
-PUT http://localhost:8080/api/comment/update/1
+PUT http://localhost:8080/api/comment/update/2
 Access-Token:{{Access-Token}}
 Content-Type: application/json
 

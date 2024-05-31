@@ -7,17 +7,19 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ScheduleResponseDto {
-    private Long scheduleKey;
+    private Long scheduleId;
     private String scheduleTitle;
     private String scheduleContent;
     private String scheduleManager;
-    private LocalDateTime scheduleDatetime;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     public ScheduleResponseDto(Schedule schedule) {
-        this.scheduleKey = schedule.getScheduleKey();
+        this.scheduleId = schedule.getScheduleId();
         this.scheduleTitle = schedule.getScheduleTitle();
         this.scheduleContent = schedule.getScheduleContent();
         this.scheduleManager = schedule.getUser().getEmail();
-        this.scheduleDatetime = schedule.getScheduleDatetime();
+        this.createdAt = schedule.getCreatedAt();
+        this.modifiedAt = schedule.getModifiedAt();
     }
 }

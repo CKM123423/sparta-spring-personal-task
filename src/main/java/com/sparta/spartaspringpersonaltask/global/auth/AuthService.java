@@ -61,7 +61,7 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(requestDto.getUserPassword());
         User user = requestDto.toEntity(encodedPassword, role);
 
-        Optional<User> checkUsername = userRepository.findByUserName(user.getUserName());
+        Optional<User> checkUsername = userRepository.findByUsername(user.getUsername());
         if (checkUsername.isPresent()) {
             throw new DuplicateException("중복된 사용자가 존재합니다.");
         }
@@ -85,8 +85,8 @@ public class AuthService {
      */
     public void login(LoginRequestDto requestDto, HttpServletResponse response) {
         // 유저 조회
-        User user = userRepository.findByUserName(requestDto.getUsername()).orElseThrow(
-                () -> new NotFoundException("유저를 찾을 수 없습니다.")
+        User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(
+                () -> new NotFoundException("해당하는 유저가 없습니다.")
         );
 
         // 유저 유효성 확인후 저장
@@ -98,7 +98,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 토큰 주입
-        addJwtTokens(user.getUserName(), authentication.getAuthorities(), response);
+        addJwtTokens(user.getUsername(), authentication.getAuthorities(), response);
     }
 
     /**

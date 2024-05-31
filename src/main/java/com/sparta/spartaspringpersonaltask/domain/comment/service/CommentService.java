@@ -3,11 +3,13 @@ package com.sparta.spartaspringpersonaltask.domain.comment.service;
 import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
 import com.sparta.spartaspringpersonaltask.domain.comment.repository.CommentRepository;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
-import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleService;
+import com.sparta.spartaspringpersonaltask.domain.schedule.repository.ScheduleRepository;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
-import com.sparta.spartaspringpersonaltask.domain.user.service.UserService;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
+import com.sparta.spartaspringpersonaltask.domain.user.repository.UserRepository;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
+import com.sparta.spartaspringpersonaltask.global.dto.user.UserRequestDto;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -16,33 +18,35 @@ import org.springframework.stereotype.Service;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final ScheduleService scheduleService;
-    private final UserService userService;
+    private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     public CommentService(CommentRepository commentRepository,
-                          ScheduleService scheduleService,
-                          UserService userService) {
+                          ScheduleRepository scheduleRepository,
+                          UserRepository userRepository) {
         this.commentRepository = commentRepository;
-        this.scheduleService = scheduleService;
-        this.userService = userService;
+        this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
-    // 유저서비스내에 스케줄이있고
-    // 스케줄내에 유저서비스
     /**
      * 댓글 등록 기능
      *
-     * @param scheduleKey 댓글을 작성할 스케줄의 고유번호
+     * @param scheduleId 댓글을 작성할 스케줄의 고유번호
      * @param requestDto  댓글내용
-     * @param userName 유저 ID
+     * @param username 유저 ID
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      */
     @Transactional
-    public CommentResponseDto createComment(Long scheduleKey, CommentRequestDto requestDto, String userName) {
-        Schedule schedule = scheduleService.retrieveSchedule(scheduleKey);
+    public CommentResponseDto createComment(Long scheduleId, CommentRequestDto requestDto, String username) {
 
-        User user = userService.getUserByUsername(userName);
+        Schedule schedule = scheduleRepository.findByScheduleIdAndScheduleDeleteAtIsNull(scheduleId);
+        if (schedule == null) {
+            throw new NotFoundException("해당하는 일정을 찾을 수 없습니다.");
+        }
 
+        User user = getUserByUsername(username);
+        
         Comment comment = requestDto.toEntity(schedule, user);
 
         commentRepository.save(comment);
@@ -53,57 +57,72 @@ public class CommentService {
     /**
      * 댓글 수정 기능
      *
-     * @param commentKey 댓글 고유번호
+     * @param commentId 댓글 고유번호
      * @param requestDto 댓글내용
-     * @param userName 유저 ID
+     * @param userRequestDto 유저 정보
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 수정된 댓글내용, 댓글작성시간
      */
     @Transactional
-    public CommentResponseDto updateComment(Long commentKey, CommentRequestDto requestDto, String userName) {
-        Comment comment = retrieveComment(commentKey);
+    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, UserRequestDto userRequestDto) {
+        Comment comment = getComment(commentId);
 
-        User user =  userService.getUserByUsername(userName);
-        userService.validateUserPermission(user, comment);
+        checkUserAuthority(userRequestDto, comment);
 
-        Comment commentToUpdate = requestDto.toEntity(comment.getSchedule(), user);
-
-        comment.update(commentToUpdate);
+        comment.update(requestDto.getCommentContent());
 
         return new CommentResponseDto(comment);
     }
 
     /**
      * 댓글 삭제 기능
-     * @param commentKey 댓글 고유번호
-     * @param userName 유저 ID
+     * @param commentId 댓글 고유번호
+     * @param userRequestDto 유저 정보
      * @return 댓글 삭제 메세지
      */
     @Transactional
-    public String deleteComment(Long commentKey, String userName) {
-        Comment comment = retrieveComment(commentKey);
+    public String deleteComment(Long commentId, UserRequestDto userRequestDto) {
+        Comment comment = getComment(commentId);
 
-        User user =  userService.getUserByUsername(userName);
-        userService.validateUserPermission(user, comment);
+        checkUserAuthority(userRequestDto, comment);
 
         comment.deletedTime();
 
-        return commentKey + "번 댓글이 삭제 되었습니다.";
+        return commentId + "번 댓글이 삭제 되었습니다.";
+    }
+
+
+    /**
+     * 댓글 객체 생성 및 검증
+     * @param commentId 댓글 고유 id
+     * @return 댓글 객체
+     */
+    private Comment getComment(Long commentId) {
+        Comment comment = commentRepository.findByCommentIdAndCommentDeleteAtIsNull(commentId);
+        if (comment == null) {
+            throw  new IllegalArgumentException("해당하는 댓글은 없거나 삭제되었습니다.");
+        }
+        return comment;
     }
 
     /**
-     * 댓글 유효성 확인
-     * @param commentId 댓글 고유번호
-     * @return 댓글고유번호, 스케줄, 유저정보, 댓글내용, 댓글작성시간
+     * 유저이름으로 유저 객체 생성
+     * @param username 유저 이름
+     * @return 유저 객체
      */
-    private Comment retrieveComment(Long commentId) {
-        Comment comment=  commentRepository.findById(commentId).orElseThrow(
-                () -> new NotFoundException("선택한 댓글이 없습니다.")
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new NotFoundException("해당하는 유저를 찾을 수 없습니다.")
         );
+    }
 
-        comment.getSchedule().checkDeletionStatus();
-
-        comment.checkDeletionStatus();
-
-        return comment;
+    /**
+     * 로그인해서 요청을한 유저의 권한 확인
+     * @param userRequestDto 로그인한 유저의 정보
+     * @param comment 일정 객체
+     */
+    private void checkUserAuthority(UserRequestDto userRequestDto, Comment comment) {
+        if (userRequestDto.getRole() != UserRoleEnum.ADMIN) {
+            comment.getUser().checkAuthority(userRequestDto.getUsername());
+        }
     }
 }

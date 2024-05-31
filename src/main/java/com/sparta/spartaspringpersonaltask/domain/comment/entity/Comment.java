@@ -2,7 +2,7 @@ package com.sparta.spartaspringpersonaltask.domain.comment.entity;
 
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
-import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.AlreadyDeletedException;
+import com.sparta.spartaspringpersonaltask.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "comments")
 @NoArgsConstructor
-public class Comment {
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentKey;
+    private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_key")
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,32 +31,21 @@ public class Comment {
     @Column(nullable = false)
     private String commentContent;
 
-    @Column(nullable = false)
-    private LocalDateTime commentDatetime;
-
-    private LocalDateTime commentDeletionStatus;
+    private LocalDateTime commentDeleteAt;
 
     @Builder
     public Comment(Schedule schedule, User user, String commentContent) {
         this.schedule = schedule;
         this.user = user;
         this.commentContent = commentContent;
-        this.commentDatetime = LocalDateTime.now();
-        this.commentDeletionStatus = null;
+        this.commentDeleteAt = null;
     }
 
-    public void update(Comment commentToUpdate) {
-        this.commentContent = commentToUpdate.getCommentContent();
-        this.commentDatetime = LocalDateTime.now();
-    }
-
-    public void checkDeletionStatus() {
-        if (this.commentDeletionStatus != null) {
-            throw new AlreadyDeletedException("이미 삭제된 댓글입니다.");
-        }
+    public void update(String commentToUpdate) {
+        this.commentContent = commentToUpdate;
     }
 
     public void deletedTime() {
-        this.commentDeletionStatus = LocalDateTime.now();
+        this.commentDeleteAt = LocalDateTime.now();
     }
 }

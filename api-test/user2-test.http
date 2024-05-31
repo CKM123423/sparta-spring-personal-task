@@ -1,6 +1,6 @@
 ## Variables
 @userNickname = Nickname
-@userName = user2
+@username = user2
 @password = AbCd1234
 @email = user2@email.com
 
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
   "userNickname":"{{userNickname}}",
-  "userName":"{{userName}}",
+  "username":"{{username}}",
   "userPassword":"{{password}}",
   "email":"{{email}}"
 }
@@ -20,13 +20,13 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "{{userName}}",
+  "username": "{{username}}",
   "password": "{{password}}"
 }
 
 > {% client.global.set("Access-Token", response.headers.valueOf("Access-Token")); %}
 
-### 리플레시 토큰 테스트
+### 리플레시 토큰 테스트 (포스트맨에서는 정상작동)
 POST http://localhost:8080/api/auth/token/refresh
 Refresh-Token:{{Refresh-Token}}
 
