@@ -32,7 +32,7 @@ public class ScheduleController {
 
     // 단일 일정 조회
     @GetMapping("/schedule/{scheduleId}")
-    public ScheduleResponseDto viewSelectedSchedule(@PathVariable Long scheduleId) {
+    public ScheduleResponseDto viewSelectedSchedule(@PathVariable(name = "scheduleId") Long scheduleId) {
         return scheduleService.viewSelectedSchedule(scheduleId);
     }
 
@@ -44,7 +44,7 @@ public class ScheduleController {
 
     // 선택한 일정 수정
     @PutMapping("/schedule/{scheduleId}")
-    public ScheduleResponseDto modifySchedule(@PathVariable Long scheduleId,
+    public ScheduleResponseDto modifySchedule(@PathVariable(name = "scheduleId") Long scheduleId,
                                               @Valid @RequestBody ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return scheduleService.modifySchedule(scheduleId, requestDto, userInfo(userDetails));
@@ -52,7 +52,7 @@ public class ScheduleController {
 
     // 선택한 일정 삭제
     @DeleteMapping("/schedule/{scheduleId}")
-    public String deleteSchedule(@PathVariable Long scheduleId,
+    public String deleteSchedule(@PathVariable(name = "scheduleId") Long scheduleId,
                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return scheduleService.deleteSchedule(scheduleId, userInfo(userDetails));
     }

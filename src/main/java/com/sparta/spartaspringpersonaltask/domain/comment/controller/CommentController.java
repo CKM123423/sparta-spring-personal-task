@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
@@ -21,14 +21,16 @@ public class CommentController {
     }
 
     /**
+     * 원래의 엔드포인트 /api/comment/{scheduleId}
+     *
      * 댓글 등록 기능
      * @param scheduleId 스케줄 고유번호
      * @param requestDto 댓글내용
      * @param userDetails 유저정보
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 댓글내용, 댓글작성시간
      */
-    @PostMapping("/create/{scheduleId}")
-    public CommentResponseDto createComment(@PathVariable Long scheduleId,
+    @PostMapping("/schedules/{scheduleId}/comment/create")
+    public CommentResponseDto createComment(@PathVariable(name = "scheduleId") Long scheduleId,
                                             @Valid @RequestBody CommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String username = userDetails.getUsername();
@@ -42,8 +44,8 @@ public class CommentController {
      * @param userDetails 유저정보
      * @return 댓글고유번호, 스케줄 고유번호, 댓글작성자, 수정된 댓글내용, 댓글작성시간
      */
-    @PutMapping("/update/{commentId}")
-    public CommentResponseDto updateComment(@PathVariable Long commentId,
+    @PutMapping("/comment/update/{commentId}")
+    public CommentResponseDto updateComment(@PathVariable(name = "commentId") Long commentId,
                                             @Valid @RequestBody CommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateComment(commentId, requestDto, userInfo(userDetails));
@@ -56,8 +58,8 @@ public class CommentController {
      * @return 댓글 삭제 메세지, http status
      */
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{commentId}")
-    public String deleteComment(@PathVariable Long commentId,
+    @DeleteMapping("/comment/{commentId}")
+    public String deleteComment(@PathVariable(name = "commentId") Long commentId,
                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         return commentService.deleteComment(commentId, userInfo(userDetails));
     }
