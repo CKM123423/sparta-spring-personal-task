@@ -1,7 +1,5 @@
 package com.sparta.spartaspringpersonaltask.domain.user.entity;
 
-import com.sparta.spartaspringpersonaltask.domain.comment.entity.Comment;
-import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.global.entity.Timestamped;
 import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
@@ -10,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,34 +30,33 @@ public class User extends Timestamped {
     private String userPassword;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String userEmail;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Comment> commentList;
+//    @OneToMany(mappedBy = "user")
+//    private List<Comment> commentList;
 
-    @OneToMany(mappedBy = "user")
-    private List<Schedule> scheduleList;
+//    @OneToMany(mappedBy = "user")
+//    private List<Schedule> scheduleList;
 
     @Builder
-    public User(String userNickname, String username, String userPassword, String email, UserRoleEnum role) {
+    public User(String userNickname, String username, String userPassword, String userEmail, UserRoleEnum role) {
         this.userNickname = userNickname;
         this.username = username;
         this.userPassword = userPassword;
-        this.email = email;
+        this.userEmail = userEmail;
         this.role = role;
     }
 
-    public void checkAuthority(Long userId) {
+    public void checkAuthorityByUserId(Long userId) {
         if (!isAdmin()){
             if (!Objects.equals(this.userId, userId)) {
                 throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
             }
         }
-
     }
 
     public void validatePassword(String userPassword, PasswordEncoder passwordEncoder) {

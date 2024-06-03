@@ -1,6 +1,7 @@
 package com.sparta.spartaspringpersonaltask.domain.schedule.controller;
 
 import com.sparta.spartaspringpersonaltask.domain.schedule.service.ScheduleService;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.auth.security.UserDetailsImpl;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.schedule.ScheduleResponseDto;
@@ -24,9 +25,9 @@ public class ScheduleController {
     @PostMapping
     public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUser().getUsername();
+        Long userId = userDetails.getUser().getUserId();
 
-        return scheduleService.createSchedule(requestDto, username);
+        return scheduleService.createSchedule(requestDto, userId);
     }
 
     // 단일 일정 조회
@@ -46,17 +47,19 @@ public class ScheduleController {
     public ScheduleResponseDto modifySchedule(@PathVariable(name = "scheduleId") Long scheduleId,
                                               @Valid @RequestBody ScheduleRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUser().getUsername();
+        Long userId = userDetails.getUser().getUserId();
+        UserRoleEnum role = userDetails.getUser().getRole();
 
-        return scheduleService.modifySchedule(scheduleId, requestDto, username);
+        return scheduleService.modifySchedule(scheduleId, requestDto, userId, role);
     }
 
     // 선택한 일정 삭제
     @DeleteMapping("/{scheduleId}")
     public String deleteSchedule(@PathVariable(name = "scheduleId") Long scheduleId,
                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUser().getUsername();
+        Long userId = userDetails.getUser().getUserId();
+        UserRoleEnum role = userDetails.getUser().getRole();
 
-        return scheduleService.deleteSchedule(scheduleId, username);
+        return scheduleService.deleteSchedule(scheduleId, userId, role);
     }
 }

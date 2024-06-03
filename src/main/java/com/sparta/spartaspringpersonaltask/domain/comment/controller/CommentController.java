@@ -1,6 +1,7 @@
 package com.sparta.spartaspringpersonaltask.domain.comment.controller;
 
 import com.sparta.spartaspringpersonaltask.domain.comment.service.CommentService;
+import com.sparta.spartaspringpersonaltask.domain.user.entity.UserRoleEnum;
 import com.sparta.spartaspringpersonaltask.global.auth.security.UserDetailsImpl;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentRequestDto;
 import com.sparta.spartaspringpersonaltask.global.dto.comment.CommentResponseDto;
@@ -30,8 +31,8 @@ public class CommentController {
     public CommentResponseDto createComment(@PathVariable(name = "scheduleId") Long scheduleId,
                                             @Valid @RequestBody CommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUsername();
-        return commentService.createComment(scheduleId, requestDto, username);
+        Long userId = userDetails.getUser().getUserId();
+        return commentService.createComment(scheduleId, requestDto, userId);
     }
 
     /**
@@ -45,8 +46,9 @@ public class CommentController {
     public CommentResponseDto updateComment(@PathVariable(name = "commentId") Long commentId,
                                             @Valid @RequestBody CommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUsername();
-        return commentService.updateComment(commentId, requestDto, username);
+        Long userId = userDetails.getUser().getUserId();
+        UserRoleEnum role = userDetails.getUser().getRole();
+        return commentService.updateComment(commentId, requestDto, userId, role);
     }
 
     /**
@@ -59,7 +61,8 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public String deleteComment(@PathVariable(name = "commentId") Long commentId,
                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
-        String username = userDetails.getUsername();
-        return commentService.deleteComment(commentId, username);
+        Long userId = userDetails.getUser().getUserId();
+        UserRoleEnum role = userDetails.getUser().getRole();
+        return commentService.deleteComment(commentId, userId, role);
     }
 }

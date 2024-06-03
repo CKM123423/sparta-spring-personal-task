@@ -27,7 +27,7 @@ public class SignupRequestDto {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "유효한 이메일 형식이어야 합니다")
-    private String email;
+    private String userEmail;
     private boolean admin = false;
     private String adminCode = "";
 
@@ -36,7 +36,7 @@ public class SignupRequestDto {
                 .userNickname(this.getUserNickname())
                 .username(this.getUsername())
                 .userPassword(encodedPassword)
-                .email(this.getEmail())
+                .userEmail(this.getUserEmail())
                 .role(role)
                 .build();
     }

@@ -17,7 +17,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Autowired
-    @Qualifier("handlerExceptionResolver")
+    @Qualifier("handlerExceptionResolver") // 여러개의 빈이 등록되어있는데 ()안의 빈을 특정해서 빈으로 등록하는 어노테이션
     private HandlerExceptionResolver resolver;
 
     @Override

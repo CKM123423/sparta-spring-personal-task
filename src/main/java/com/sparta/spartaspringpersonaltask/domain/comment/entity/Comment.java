@@ -3,12 +3,14 @@ package com.sparta.spartaspringpersonaltask.domain.comment.entity;
 import com.sparta.spartaspringpersonaltask.domain.schedule.entity.Schedule;
 import com.sparta.spartaspringpersonaltask.domain.user.entity.User;
 import com.sparta.spartaspringpersonaltask.global.entity.Timestamped;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidException;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -41,11 +43,17 @@ public class Comment extends Timestamped {
         this.commentDeleteAt = null;
     }
 
-    public void update(String commentToUpdate) {
+    public void updateContent(String commentToUpdate) {
         this.commentContent = commentToUpdate;
     }
 
     public void deletedTime() {
         this.commentDeleteAt = LocalDateTime.now();
+    }
+
+    public void checkUser(Long userId) {
+        if (!Objects.equals(this.user.getUserId(), userId)) {
+            throw new InvalidException("유저 정보가 일치하지 않습니다. 작성자만 수정, 삭제가 가능합니다.");
+        }
     }
 }

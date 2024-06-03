@@ -19,7 +19,6 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     // 유효성검사 실패시 오류문 출력
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -34,6 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     // 이미 삭제된 데이터를 삭제할때
+    // 삭제된데이터를 검색데이터 구간에서 걸러 유효하지않은 익셉셥으로 묶어 처리해서 불필요해짐
+    @Deprecated
     @ExceptionHandler(AlreadyDeletedException.class)
     public ResponseEntity<Object> handleAlreadyDeletedException(AlreadyDeletedException e) {
         return ResponseEntity.badRequest().body(e.getMessage());

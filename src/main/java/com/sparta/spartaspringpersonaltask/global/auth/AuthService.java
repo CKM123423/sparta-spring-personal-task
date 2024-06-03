@@ -66,7 +66,7 @@ public class AuthService {
             throw new DuplicateException("중복된 사용자가 존재합니다.");
         }
 
-        Optional<User> checkEmail = userRepository.findByEmail(user.getEmail());
+        Optional<User> checkEmail = userRepository.findByUserEmail(user.getUserEmail());
         if (checkEmail.isPresent()) {
             throw new DuplicateException("중복된 Email 입니다.");
         }

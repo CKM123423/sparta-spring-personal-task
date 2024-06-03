@@ -12,7 +12,7 @@ Content-Type: application/json
   "userNickname":"{{userNickname}}",
   "username":"{{username}}",
   "userPassword":"{{password}}",
-  "email":"{{email}}"
+  "userEmail":"{{email}}"
 }
 
 ### 유저 로그인

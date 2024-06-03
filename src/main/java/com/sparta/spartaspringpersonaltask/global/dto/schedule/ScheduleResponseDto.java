@@ -18,7 +18,7 @@ public class ScheduleResponseDto {
         this.scheduleId = schedule.getScheduleId();
         this.scheduleTitle = schedule.getScheduleTitle();
         this.scheduleContent = schedule.getScheduleContent();
-        this.scheduleManager = schedule.getUser().getEmail();
+        this.scheduleManager = schedule.getUser().getUserEmail();
         this.createdAt = schedule.getCreatedAt();
         this.modifiedAt = schedule.getModifiedAt();
     }
