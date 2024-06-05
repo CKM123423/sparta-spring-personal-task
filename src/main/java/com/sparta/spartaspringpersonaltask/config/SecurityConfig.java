@@ -1,6 +1,7 @@
 package com.sparta.spartaspringpersonaltask.config;
 
 import com.sparta.spartaspringpersonaltask.global.auth.security.JwtAuthenticationFilter;
+import com.sparta.spartaspringpersonaltask.global.auth.security.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     private final AuthenticationProvider authenticationProvider;
 
@@ -50,6 +53,7 @@ public class SecurityConfig {
 
         // 필터 관리
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

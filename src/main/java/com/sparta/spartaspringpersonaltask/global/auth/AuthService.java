@@ -112,7 +112,7 @@ public class AuthService {
         if (StringUtils.hasText(refreshToken) && refreshToken.startsWith(JwtProvider.BEARER_PREFIX)) {
             refreshToken = refreshToken.substring(7);
         }
-
+        jwtProvider.validateToken(refreshToken);
         String username = jwtProvider.getUsername(refreshToken);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

@@ -1,5 +1,7 @@
 package com.sparta.spartaspringpersonaltask.global.auth.jwt;
 
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.InvalidTokenException;
+import com.sparta.spartaspringpersonaltask.global.exception.customexceptions.TokenExpiredException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -79,20 +81,14 @@ public class JwtProvider {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException e) {
-            log.error("유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
-            log.error("만료된 JWT 토큰 입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.error("지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
-            log.error("잘못된 JWT 토큰 입니다.");
+            throw new TokenExpiredException("만료된 JWT 토큰입니다.");
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException("유효하지 않은 JWT 토큰입니다.");
         }
-        return false;
     }
 
     // 토큰에서 사용자 정보 가져오기
