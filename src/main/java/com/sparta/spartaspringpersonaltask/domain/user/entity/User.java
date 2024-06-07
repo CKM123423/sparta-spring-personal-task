@@ -36,11 +36,6 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-//    @OneToMany(mappedBy = "user")
-//    private List<Comment> commentList;
-
-//    @OneToMany(mappedBy = "user")
-//    private List<Schedule> scheduleList;
 
     @Builder
     public User(String userNickname, String username, String userPassword, String userEmail, UserRoleEnum role) {
